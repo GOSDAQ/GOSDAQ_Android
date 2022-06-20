@@ -3,18 +3,19 @@ package com.project.gosdaq.adaptor
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.project.gosdaq.dao.InterestingData
+import com.project.gosdaq.dao.InterestingResponse.InterestingResponseInformation
 import com.project.gosdaq.databinding.ItemFavoriteRecyclerViewBinding
 
-class InterestingAdaptor(private val data:MutableList<InterestingData>):
+class InterestingAdaptor(private val data:MutableList<InterestingResponseInformation>):
     RecyclerView.Adapter<InterestingAdaptor.FavoriteViewHolder>() {
 
     inner class FavoriteViewHolder(private val binding: ItemFavoriteRecyclerViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(data: InterestingData) {
-            binding.stockName.text = data.stockName
-            binding.stockPrice.text = "SubTitle = ${data.stockName}"
+        fun bind(data: InterestingResponseInformation) {
+            binding.stockName.text = data.id
+            binding.stockPrice.text = "Price = ${data.price}"
+            binding.stockFluctuatingPercent.text = "${data.rate}%"
         }
     }
 

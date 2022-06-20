@@ -1,15 +1,16 @@
 package com.project.gosdaq.contract
 
 import com.project.gosdaq.dao.InterestingData
+import com.project.gosdaq.dao.InterestingResponse.InterestingResponseInformation
 
 interface InterestingContract {
     interface InterestingView {
-        fun setInterestingData(interestingDataList: MutableList<InterestingData>)
+        fun setInterestingData(interestingResponseInformation: MutableList<InterestingResponseInformation>)
     }
 
     interface InterestingPresenter {
         fun loadInterestingData()
 
-        fun addInterestingData(newInterestingData: InterestingData)
+        fun addInterestingData(newInterestingData: String)
     }
 }
