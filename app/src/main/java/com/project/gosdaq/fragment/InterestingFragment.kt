@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.project.gosdaq.dao.InterestingData
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
+import com.project.gosdaq.dao.InterestingResponse.InterestingResponseInformation
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
 
 class InterestingFragment : Fragment(), InterestingContract.InterestingView {
@@ -24,16 +24,17 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         mainPresenter = InterestingPresenter(this@InterestingFragment)
 
         mainPresenter.loadInterestingData()
+
         return binding.root
     }
 
-    override fun setInterestingData(interestingDataList: MutableList<InterestingData>) {
-        val adapter = InterestingAdaptor(interestingDataList)
+    override fun setInterestingData(interestingResponseInformation: MutableList<InterestingResponseInformation>) {
+        val adapter = InterestingAdaptor(interestingResponseInformation)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
