@@ -4,10 +4,10 @@ import com.project.gosdaq.dao.InterestingData
 
 interface InterestingLocalDataSourceImpl {
     interface LoadInterestingDataCallback {
-        fun onLoaded(interestingDataList: MutableList<String>): MutableList<String>
-        fun onLoadFailed(): MutableList<String>
+        fun onLoaded(interestingDataList: MutableList<String>)
+        fun onLoadFailed()
     }
 
-    fun loadInterestingDataList(loadInterestingDataCallback: LoadInterestingDataCallback): MutableList<String>
+    fun loadInterestingDataList(loadInterestingDataCallback: LoadInterestingDataCallback)
     fun saveNewInterestingData(interestingData: String)
 }

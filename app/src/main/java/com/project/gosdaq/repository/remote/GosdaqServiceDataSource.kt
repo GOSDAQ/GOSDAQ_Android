@@ -14,12 +14,11 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
         .build()
 
     override fun getStockInformation(
-        stockDataCallback: GosdaqServiceDataSourceImpl.StockDataCallback,
-        stockNameList: MutableList<String>
+        stockNameList: MutableList<String>,
+        stockDataCallback: GosdaqServiceDataSourceImpl.StockDataCallback
     ) {
 
         val gosdaqService: GosdaqServiceApi = gosdaqBuilder.create(GosdaqServiceApi::class.java)
-        println("getStockInformation")
 
         val payload = hashMapOf<String, MutableList<String>>(
             "tickers" to stockNameList
@@ -35,7 +34,7 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
                 }
 
                 override fun onFailure(call: Call<InterestingResponseDao>, t: Throwable) {
-                    stockDataCallback.onFailure()
+                    stockDataCallback.onFailure(t)
                 }
             })
     }

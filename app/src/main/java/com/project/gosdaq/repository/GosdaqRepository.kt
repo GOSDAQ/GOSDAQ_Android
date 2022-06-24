@@ -13,7 +13,7 @@ object GosdaqRepository : InterestingLocalDataSourceImpl, GosdaqServiceDataSourc
         InterestingLocalDataSource()
     private val gosdaqServiceDataSource: GosdaqServiceDataSourceImpl = GosdaqServiceDataSource()
 
-    override fun loadInterestingDataList(loadInterestingDataCallback: InterestingLocalDataSourceImpl.LoadInterestingDataCallback): MutableList<String> {
+    override fun loadInterestingDataList(loadInterestingDataCallback: InterestingLocalDataSourceImpl.LoadInterestingDataCallback) {
         return interestingLocalDataSource.loadInterestingDataList(loadInterestingDataCallback)
     }
 
@@ -22,9 +22,9 @@ object GosdaqRepository : InterestingLocalDataSourceImpl, GosdaqServiceDataSourc
     }
 
     override fun getStockInformation(
-        stockDataCallback: GosdaqServiceDataSourceImpl.StockDataCallback,
-        stockNameList: MutableList<String>
+        stockNameList: MutableList<String>,
+        stockDataCallback: GosdaqServiceDataSourceImpl.StockDataCallback
     ) {
-        gosdaqServiceDataSource.getStockInformation(stockDataCallback, stockNameList)
+        gosdaqServiceDataSource.getStockInformation(stockNameList, stockDataCallback)
     }
 }
