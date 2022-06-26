@@ -9,11 +9,11 @@ class InterestingLocalDataSource : InterestingLocalDataSourceImpl {
         "SBUX"
     )
 
-    override fun loadInterestingDataList(loadInterestingDataCallback: InterestingLocalDataSourceImpl.LoadInterestingDataCallback): MutableList<String> {
+    override fun loadInterestingDataList(loadInterestingDataCallback: InterestingLocalDataSourceImpl.LoadInterestingDataCallback) {
         if (interestingDataList.isNotEmpty()) {
-            return loadInterestingDataCallback.onLoaded(interestingDataList)
+            loadInterestingDataCallback.onLoaded(interestingDataList)
         } else {
-            return loadInterestingDataCallback.onLoadFailed()
+            loadInterestingDataCallback.onLoadFailed()
         }
     }
 
