@@ -1,5 +1,6 @@
 package com.project.gosdaq.repository.remote
 
+import com.project.gosdaq.BuildConfig
 import com.project.gosdaq.dao.InterestingResponse.InterestingResponseDao
 import retrofit2.Call
 import retrofit2.Callback
@@ -9,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
     private val gosdaqBuilder = Retrofit.Builder()
-        .baseUrl("")
+        .baseUrl(BuildConfig.API_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
