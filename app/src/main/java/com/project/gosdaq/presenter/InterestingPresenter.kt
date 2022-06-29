@@ -1,5 +1,6 @@
 package com.project.gosdaq.presenter
 
+import android.util.Log
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.dao.InterestingResponse.InterestingResponseDao
 import com.project.gosdaq.repository.GosdaqRepository
@@ -21,6 +22,8 @@ class InterestingPresenter(
         val localInterestingStockList = loadInterestingData()
         val stockInformation = getStockInformation(localInterestingStockList)
         withContext(Dispatchers.Main) {
+            Log.i("InterestingPresenter", stockInformation.isError.toString())
+            Log.i("InterestingPresenter", stockInformation.message)
             interestingView.setInterestingData(stockInformation.data!!)
         }
     }
