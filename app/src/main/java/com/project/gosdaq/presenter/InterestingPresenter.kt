@@ -17,14 +17,22 @@ class InterestingPresenter(
     private val interestingView: InterestingContract.InterestingView,
 ) : InterestingContract.InterestingPresenter {
 
+    private val TAG = this.javaClass.simpleName
 
     suspend fun initInterestingStockList() {
         val localInterestingStockList = loadInterestingData()
         val stockInformation = getStockInformation(localInterestingStockList)
+
         withContext(Dispatchers.Main) {
-            Log.i("InterestingPresenter", stockInformation.isError.toString())
-            Log.i("InterestingPresenter", stockInformation.message)
-            interestingView.setInterestingData(stockInformation.data!!)
+            Log.i(TAG, "isError: ${stockInformation.isError}")
+            Log.i(TAG, "message: ${stockInformation.message}")
+
+            if(!stockInformation.isError){
+                interestingView.setInterestingData(stockInformation.data)
+            }else{
+                // Error로 인해 데이터를 받지 못했을 때 동작 필요
+                Log.i(TAG, "isError")
+            }
         }
     }
 
