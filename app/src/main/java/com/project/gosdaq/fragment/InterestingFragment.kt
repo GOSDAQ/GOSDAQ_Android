@@ -43,5 +43,8 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         val adapter = InterestingAdaptor(interestingResponseInformation)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.favoriteShimmerLayout.visibility = View.GONE
+        binding.favoriteShimmerLayout.stopShimmer()
     }
 }
