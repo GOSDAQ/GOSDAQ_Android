@@ -1,5 +1,6 @@
 package com.project.gosdaq.presenter
 
+import android.util.Log
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.dao.InterestingResponse.InterestingResponseDao
 import com.project.gosdaq.repository.GosdaqRepository
@@ -16,12 +17,22 @@ class InterestingPresenter(
     private val interestingView: InterestingContract.InterestingView,
 ) : InterestingContract.InterestingPresenter {
 
+    private val TAG = this.javaClass.simpleName
 
     suspend fun initInterestingStockList() {
         val localInterestingStockList = loadInterestingData()
         val stockInformation = getStockInformation(localInterestingStockList)
+
         withContext(Dispatchers.Main) {
-            interestingView.setInterestingData(stockInformation.data!!)
+            Log.i(TAG, "isError: ${stockInformation.isError}")
+            Log.i(TAG, "message: ${stockInformation.message}")
+
+            if(!stockInformation.isError){
+                interestingView.setInterestingData(stockInformation.data)
+            }else{
+                // Error로 인해 데이터를 받지 못했을 때 동작 필요
+                Log.i(TAG, "isError")
+            }
         }
     }
 
