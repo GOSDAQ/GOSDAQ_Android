@@ -6,6 +6,7 @@ import com.project.gosdaq.dao.InterestingResponse.InterestingResponseInformation
 
 interface InterestingContract {
     interface InterestingView {
+        fun setShimmerVisibility(visibility: Boolean)
         fun setInterestingData(interestingResponseInformation: MutableList<InterestingResponseInformation>)
     }
 

@@ -39,12 +39,24 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         return binding.root
     }
 
+    override fun setShimmerVisibility(visibility: Boolean) {
+        when (visibility) {
+            true -> {
+                binding.favoriteShimmerLayout.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
+                binding.favoriteShimmerLayout.startShimmer()
+            }
+            else -> {
+                binding.favoriteShimmerLayout.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.favoriteShimmerLayout.stopShimmer()
+            }
+        }
+    }
+
     override fun setInterestingData(interestingResponseInformation: MutableList<InterestingResponseInformation>) {
         val adapter = InterestingAdaptor(interestingResponseInformation)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        binding.favoriteShimmerLayout.visibility = View.GONE
-        binding.favoriteShimmerLayout.stopShimmer()
     }
 }

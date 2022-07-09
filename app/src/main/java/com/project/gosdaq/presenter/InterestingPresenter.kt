@@ -29,6 +29,7 @@ class InterestingPresenter(
 
             if(!stockInformation.isError){
                 interestingView.setInterestingData(stockInformation.data)
+                interestingView.setShimmerVisibility(false)
             }else{
                 // Error로 인해 데이터를 받지 못했을 때 동작 필요
                 Log.i(TAG, "isError")
