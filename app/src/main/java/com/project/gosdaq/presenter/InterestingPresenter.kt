@@ -19,7 +19,7 @@ class InterestingPresenter(
 
     private val TAG = this.javaClass.simpleName
 
-    suspend fun initInterestingStockList() {
+    override suspend fun initInterestingStockList() {
         val localInterestingStockList = loadInterestingData()
         val stockInformation = getStockInformation(localInterestingStockList)
 
