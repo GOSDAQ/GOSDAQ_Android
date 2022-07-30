@@ -36,18 +36,21 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
                     call: Call<InterestingResponseDao>,
                     response: Response<InterestingResponseDao>
                 ) {
-                    Log.i(TAG, "onResponse")
                     stockDataCallback.onResponse(response.body()!!)
                 }
 
                 override fun onFailure(call: Call<InterestingResponseDao>, t: Throwable) {
                     onFailureRetryCount += 1
-                    if (onFailureRetryCount < 2) {
-                        Log.i(TAG, "onFailure, $onFailureRetryCount times retry")
-                        call.clone().enqueue(this)
+                    if (onFailureRetryCount < 3) {
+                        retryOnFailure(call)
                     } else {
                         stockDataCallback.onFailure(t)
                     }
+                }
+
+                fun retryOnFailure(call: Call<InterestingResponseDao>) {
+                    Log.i(TAG, "onFailure, retry $onFailureRetryCount times")
+                    call.clone().enqueue(this)
                 }
             })
     }
