@@ -1,6 +1,6 @@
-package com.project.gosdaq.dao.InterestingResponse
+package com.project.gosdaq.data.interesting.response
 
-data class InterestingResponseDao(
+data class InterestingResponse(
     val isError: Boolean,
     val data: MutableList<InterestingResponseInformation>,
     val message: String

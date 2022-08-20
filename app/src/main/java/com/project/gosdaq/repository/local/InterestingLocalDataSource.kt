@@ -1,7 +1,5 @@
 package com.project.gosdaq.repository.local
 
-import com.project.gosdaq.dao.InterestingData
-
 class InterestingLocalDataSource : InterestingLocalDataSourceImpl {
 
     private val interestingDataList: MutableList<String> = mutableListOf(

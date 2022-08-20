@@ -1,7 +1,7 @@
 package com.project.gosdaq.contract
 
-import com.project.gosdaq.dao.InterestingResponse.InterestingResponseDao
-import com.project.gosdaq.dao.InterestingResponse.InterestingResponseInformation
+import com.project.gosdaq.data.interesting.response.InterestingResponse
+import com.project.gosdaq.data.interesting.response.InterestingResponseInformation
 
 interface InterestingContract {
     interface InterestingView {
@@ -12,7 +12,7 @@ interface InterestingContract {
     interface InterestingPresenter {
         suspend fun initInterestingStockList()
         suspend fun loadInterestingData(): MutableList<String>
-        suspend fun getStockInformation(stockNameList: MutableList<String>): InterestingResponseDao
+        suspend fun getStockInformation(stockNameList: MutableList<String>): InterestingResponse
         fun addInterestingData(newInterestingData: String)
     }
 }

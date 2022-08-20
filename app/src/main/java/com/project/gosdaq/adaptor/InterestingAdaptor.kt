@@ -3,7 +3,7 @@ package com.project.gosdaq.adaptor
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.project.gosdaq.dao.InterestingResponse.InterestingResponseInformation
+import com.project.gosdaq.data.interesting.response.InterestingResponseInformation
 import com.project.gosdaq.databinding.ItemFavoriteRecyclerViewBinding
 
 class InterestingAdaptor(private val data:MutableList<InterestingResponseInformation>):

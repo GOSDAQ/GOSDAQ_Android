@@ -2,12 +2,11 @@ package com.project.gosdaq.presenter
 
 import android.util.Log
 import com.project.gosdaq.contract.InterestingContract
-import com.project.gosdaq.dao.InterestingResponse.InterestingResponseDao
+import com.project.gosdaq.data.interesting.response.InterestingResponse
 import com.project.gosdaq.repository.GosdaqRepository
 import com.project.gosdaq.repository.local.InterestingLocalDataSourceImpl
 import com.project.gosdaq.repository.remote.GosdaqServiceDataSourceImpl
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -52,13 +51,13 @@ class InterestingPresenter(
         }
     }
 
-    override suspend fun getStockInformation(stockNameList: MutableList<String>): InterestingResponseDao {
+    override suspend fun getStockInformation(stockNameList: MutableList<String>): InterestingResponse {
         return suspendCoroutine { continuation ->
             GosdaqRepository.getStockInformation(
                 stockNameList,
                 object : GosdaqServiceDataSourceImpl.StockDataCallback {
-                    override fun onResponse(interestingResponseDao: InterestingResponseDao) {
-                        continuation.resume(interestingResponseDao)
+                    override fun onResponse(interestingResponse: InterestingResponse) {
+                        continuation.resume(interestingResponse)
                     }
 
                     override fun onFailure(e: Throwable) {

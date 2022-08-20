@@ -1,11 +1,10 @@
 package com.project.gosdaq.repository.remote
 
-import com.project.gosdaq.dao.InterestingResponse.InterestingResponseDao
-import java.lang.Exception
+import com.project.gosdaq.data.interesting.response.InterestingResponse
 
 interface GosdaqServiceDataSourceImpl {
     interface StockDataCallback {
-        fun onResponse(interestingResponseDao: InterestingResponseDao)
+        fun onResponse(interestingResponse: InterestingResponse)
         fun onFailure(e: Throwable)
     }
 
