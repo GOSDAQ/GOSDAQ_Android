@@ -10,10 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
-import com.project.gosdaq.dao.InterestingResponse.InterestingResponseInformation
+import com.project.gosdaq.data.interesting.response.InterestingResponseInformation
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class InterestingFragment : Fragment(), InterestingContract.InterestingView {

@@ -1,4 +1,4 @@
-package com.project.gosdaq.dao.InterestingResponse
+package com.project.gosdaq.data.interesting.response
 
 data class InterestingResponseData(
     val data: String?,

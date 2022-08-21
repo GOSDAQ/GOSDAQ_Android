@@ -2,7 +2,7 @@ package com.project.gosdaq.repository.remote
 
 import android.util.Log
 import com.project.gosdaq.BuildConfig
-import com.project.gosdaq.dao.InterestingResponse.InterestingResponseDao
+import com.project.gosdaq.data.interesting.response.InterestingResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,17 +29,17 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
         )
 
         gosdaqService.getInterestingData(payload)
-            .enqueue(object : Callback<InterestingResponseDao> {
+            .enqueue(object : Callback<InterestingResponse> {
                 var onFailureRetryCount = 0
 
                 override fun onResponse(
-                    call: Call<InterestingResponseDao>,
-                    response: Response<InterestingResponseDao>
+                    call: Call<InterestingResponse>,
+                    response: Response<InterestingResponse>
                 ) {
                     stockDataCallback.onResponse(response.body()!!)
                 }
 
-                override fun onFailure(call: Call<InterestingResponseDao>, t: Throwable) {
+                override fun onFailure(call: Call<InterestingResponse>, t: Throwable) {
                     onFailureRetryCount += 1
                     if (onFailureRetryCount < 3) {
                         retryOnFailure(call)
@@ -48,7 +48,7 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
                     }
                 }
 
-                fun retryOnFailure(call: Call<InterestingResponseDao>) {
+                fun retryOnFailure(call: Call<InterestingResponse>) {
                     Log.i(TAG, "onFailure, retry $onFailureRetryCount times")
                     call.clone().enqueue(this)
                 }
