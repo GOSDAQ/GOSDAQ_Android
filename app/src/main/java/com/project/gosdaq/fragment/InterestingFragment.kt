@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
-import com.project.gosdaq.data.interesting.response.InterestingResponseInformation
+import com.project.gosdaq.data.interesting.response.InterestingResponseData
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,8 +53,8 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         }
     }
 
-    override fun setInterestingData(interestingResponseInformation: MutableList<InterestingResponseInformation>) {
-        val adapter = InterestingAdaptor(interestingResponseInformation)
+    override fun setInterestingData(interestingResponseData: MutableList<InterestingResponseData>) {
+        val adapter = InterestingAdaptor(interestingResponseData)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
