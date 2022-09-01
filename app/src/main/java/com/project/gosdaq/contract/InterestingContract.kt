@@ -1,12 +1,12 @@
 package com.project.gosdaq.contract
 
 import com.project.gosdaq.data.interesting.response.InterestingResponse
-import com.project.gosdaq.data.interesting.response.InterestingResponseInformation
+import com.project.gosdaq.data.interesting.response.InterestingResponseData
 
 interface InterestingContract {
     interface InterestingView {
         fun setShimmerVisibility(visibility: Boolean)
-        fun setInterestingData(interestingResponseInformation: MutableList<InterestingResponseInformation>)
+        fun setInterestingData(interestingResponseData: MutableList<InterestingResponseData>)
     }
 
     interface InterestingPresenter {

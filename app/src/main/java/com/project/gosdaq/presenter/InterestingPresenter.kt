@@ -23,10 +23,10 @@ class InterestingPresenter(
         val stockInformation = getStockInformation(localInterestingStockList)
 
         withContext(Dispatchers.Main) {
-            Log.i(TAG, "isError: ${stockInformation.isError}")
-            Log.i(TAG, "message: ${stockInformation.message}")
+            Log.i(TAG, "isError: ${stockInformation.code}")
+            Log.i(TAG, "message: ${stockInformation.msg}")
 
-            if(!stockInformation.isError){
+            if(stockInformation.code == 200){
                 interestingView.setInterestingData(stockInformation.data)
                 interestingView.setShimmerVisibility(false)
             }else{
