@@ -1,6 +1,7 @@
 package com.project.gosdaq.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +11,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
+import com.project.gosdaq.data.InterestingEntity
 import com.project.gosdaq.data.interesting.response.InterestingResponseData
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
+import com.project.gosdaq.repository.GosdaqRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class InterestingFragment : Fragment(), InterestingContract.InterestingView {
+
+    private val TAG = this.javaClass.simpleName
+    private val gosdaqRepository: GosdaqRepository by lazy{
+        Log.i(TAG, "GosdaqRepository Init")
+        GosdaqRepository.getInstance(requireContext())
+    }
 
     private lateinit var binding: FragmentFavoriteBinding
     private lateinit var mainPresenter: InterestingPresenter
@@ -29,13 +39,15 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
-        mainPresenter = InterestingPresenter(this@InterestingFragment)
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            mainPresenter.initInterestingStockList()
-        }
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mainPresenter = InterestingPresenter(this@InterestingFragment, gosdaqRepository)
+        lifecycleScope.launch(Dispatchers.IO) {
+            mainPresenter.setInterestingDataList()
+        }
     }
 
     override fun setShimmerVisibility(visibility: Boolean) {
@@ -53,9 +65,17 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         }
     }
 
-    override fun setInterestingData(interestingResponseData: MutableList<InterestingResponseData>) {
+    override fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseData>) {
         val adapter = InterestingAdaptor(interestingResponseData)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    override fun setFloatingActionButton() {
+        binding.addInteresting.setOnClickListener {
+            CoroutineScope(Dispatchers.Default).launch{
+                gosdaqRepository.insertInterestingData(InterestingEntity("SBUX"))
+            }
+        }
     }
 }

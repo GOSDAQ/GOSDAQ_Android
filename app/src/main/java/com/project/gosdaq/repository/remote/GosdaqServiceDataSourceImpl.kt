@@ -1,5 +1,6 @@
 package com.project.gosdaq.repository.remote
 
+import com.project.gosdaq.data.InterestingEntity
 import com.project.gosdaq.data.interesting.response.InterestingResponse
 
 interface GosdaqServiceDataSourceImpl {
@@ -9,7 +10,7 @@ interface GosdaqServiceDataSourceImpl {
     }
 
     fun getStockInformation(
-        stockNameList: MutableList<String>,
+        stockNameList: List<InterestingEntity>,
         stockDataCallback: StockDataCallback
     )
 }

@@ -2,6 +2,7 @@ package com.project.gosdaq.repository.remote
 
 import android.util.Log
 import com.project.gosdaq.BuildConfig
+import com.project.gosdaq.data.InterestingEntity
 import com.project.gosdaq.data.interesting.response.InterestingResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,14 +19,20 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
         .build()
 
     override fun getStockInformation(
-        stockNameList: MutableList<String>,
+        stockNameList: List<InterestingEntity>,
         stockDataCallback: GosdaqServiceDataSourceImpl.StockDataCallback
     ) {
 
         val gosdaqService: GosdaqServiceApi = gosdaqBuilder.create(GosdaqServiceApi::class.java)
 
+        val data = mutableListOf<String>()
+
+        stockNameList.forEach{
+            data.add(it.ticker)
+        }
+
         val payload = hashMapOf<String, MutableList<String>>(
-            "tickers" to stockNameList
+            "tickers" to data
         )
 
         gosdaqService.getInterestingData(payload)
