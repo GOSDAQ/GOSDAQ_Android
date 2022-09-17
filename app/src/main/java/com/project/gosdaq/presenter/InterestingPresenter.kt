@@ -4,6 +4,7 @@ import android.util.Log
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.data.InterestingEntity
 import com.project.gosdaq.data.interesting.response.InterestingResponse
+import com.project.gosdaq.data.interesting.response.InterestingResponseData
 import com.project.gosdaq.repository.GosdaqRepository
 import com.project.gosdaq.repository.local.InterestingLocalDataSourceImpl
 import com.project.gosdaq.repository.remote.GosdaqServiceDataSourceImpl
@@ -20,6 +21,8 @@ class InterestingPresenter(
 
     private val TAG = this.javaClass.simpleName
 
+    private lateinit var interestingRecyclerViewData: MutableList<InterestingResponseData>
+
     override suspend fun setInterestingDataList() {
         val localInterestingStockList = getLocalInterestingDataList()
         val stockInformation = getInterestingDataInformation(localInterestingStockList)
@@ -29,7 +32,8 @@ class InterestingPresenter(
             Log.i(TAG, "msg: ${stockInformation.msg}")
 
             if(stockInformation.code == 200){
-                interestingView.initInterestingRecyclerView(stockInformation.data)
+                interestingRecyclerViewData = stockInformation.data
+                interestingView.initInterestingRecyclerView(interestingRecyclerViewData)
                 interestingView.setShimmerVisibility(false)
             }else{
                 // Error로 인해 데이터를 받지 못했을 때 동작 필요
@@ -70,9 +74,7 @@ class InterestingPresenter(
     }
 
     override suspend fun insertInterestingData(newInterestingData: String) {
-        // 유효한 정보인지 확인
-
-        // 데이터 저장
         gosdaqRepository.insertInterestingData(InterestingEntity(newInterestingData))
     }
+
 }

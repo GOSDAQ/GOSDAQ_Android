@@ -10,7 +10,7 @@ class InterestingLocalDataSource(context: Context) : InterestingLocalDataSourceI
     private val interestingDatabase = InterestingDatabase.getDatabase(context)
 
     private lateinit var localInterestingDataList: List<InterestingEntity>
-    
+
     override fun loadInterestingDataList(loadInterestingDataCallback: InterestingLocalDataSourceImpl.LoadInterestingDataCallback) {
         try{
             localInterestingDataList = interestingDatabase.interestingDao().getAll()

@@ -11,24 +11,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
-import com.project.gosdaq.data.InterestingEntity
 import com.project.gosdaq.data.interesting.response.InterestingResponseData
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
 import com.project.gosdaq.repository.GosdaqRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class InterestingFragment : Fragment(), InterestingContract.InterestingView {
 
     private val TAG = this.javaClass.simpleName
-    private val gosdaqRepository: GosdaqRepository by lazy{
+    private val gosdaqRepository: GosdaqRepository by lazy {
         Log.i(TAG, "GosdaqRepository Init")
         GosdaqRepository.getInstance(requireContext())
     }
 
     private lateinit var binding: FragmentFavoriteBinding
     private lateinit var mainPresenter: InterestingPresenter
+    private lateinit var adapter: InterestingAdaptor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +47,7 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         lifecycleScope.launch(Dispatchers.IO) {
             mainPresenter.setInterestingDataList()
         }
+        setFloatingActionButton()
     }
 
     override fun setShimmerVisibility(visibility: Boolean) {
@@ -66,15 +66,18 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
     }
 
     override fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseData>) {
-        val adapter = InterestingAdaptor(interestingResponseData)
+        adapter = InterestingAdaptor(interestingResponseData)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun setFloatingActionButton() {
         binding.addInteresting.setOnClickListener {
-            CoroutineScope(Dispatchers.Default).launch{
-                gosdaqRepository.insertInterestingData(InterestingEntity("SBUX"))
+
+            // 데이터 유효 확인
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                mainPresenter.insertInterestingData("SBUX")
             }
         }
     }
