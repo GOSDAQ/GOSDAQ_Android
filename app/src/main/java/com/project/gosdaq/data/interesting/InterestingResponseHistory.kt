@@ -1,4 +1,4 @@
-package com.project.gosdaq.data.interesting.response
+package com.project.gosdaq.data.interesting
 
 data class InterestingResponseHistory(
     val data: String,

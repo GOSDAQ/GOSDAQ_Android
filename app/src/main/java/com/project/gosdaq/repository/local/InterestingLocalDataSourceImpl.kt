@@ -1,11 +1,13 @@
 package com.project.gosdaq.repository.local
 
+import com.project.gosdaq.data.room.InterestingEntity
+
 interface InterestingLocalDataSourceImpl {
     interface LoadInterestingDataCallback {
-        fun onLoaded(interestingDataList: MutableList<String>)
+        fun onLoaded(interestingDataList: List<InterestingEntity>)
         fun onLoadFailed()
     }
 
     fun loadInterestingDataList(loadInterestingDataCallback: LoadInterestingDataCallback)
-    fun saveNewInterestingData(interestingData: String)
+    fun insertInterestingData(newInterestingEntity: InterestingEntity)
 }

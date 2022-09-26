@@ -1,21 +1,30 @@
 package com.project.gosdaq.repository.local
 
-class InterestingLocalDataSource : InterestingLocalDataSourceImpl {
+import android.content.Context
+import com.project.gosdaq.data.room.InterestingDatabase
+import com.project.gosdaq.data.room.InterestingEntity
+import java.lang.Exception
 
-    private val interestingDataList: MutableList<String> = mutableListOf(
-        "COIN",
-        "SBUX"
-    )
+class InterestingLocalDataSource(context: Context) : InterestingLocalDataSourceImpl {
+
+    private val interestingDatabase = InterestingDatabase.getDatabase(context)
+
+    private lateinit var localInterestingDataList: List<InterestingEntity>
 
     override fun loadInterestingDataList(loadInterestingDataCallback: InterestingLocalDataSourceImpl.LoadInterestingDataCallback) {
-        if (interestingDataList.isNotEmpty()) {
-            loadInterestingDataCallback.onLoaded(interestingDataList)
-        } else {
+        try{
+            localInterestingDataList = interestingDatabase.interestingDao().getAll()
+            if(localInterestingDataList.isNotEmpty()){
+                loadInterestingDataCallback.onLoaded(localInterestingDataList)
+            }else{
+                loadInterestingDataCallback.onLoadFailed()
+            }
+        }catch (_:Exception){
             loadInterestingDataCallback.onLoadFailed()
         }
     }
 
-    override fun saveNewInterestingData(interestingData: String) {
-        interestingDataList.add(interestingData)
+    override fun insertInterestingData(newInterestingEntity: InterestingEntity) {
+        interestingDatabase.interestingDao().insert(newInterestingEntity)
     }
 }
