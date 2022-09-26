@@ -1,4 +1,4 @@
-package com.project.gosdaq.data
+package com.project.gosdaq.data.room
 
 import androidx.room.Dao
 import androidx.room.Insert

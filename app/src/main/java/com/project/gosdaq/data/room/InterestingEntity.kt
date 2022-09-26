@@ -1,4 +1,4 @@
-package com.project.gosdaq.data
+package com.project.gosdaq.data.room
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

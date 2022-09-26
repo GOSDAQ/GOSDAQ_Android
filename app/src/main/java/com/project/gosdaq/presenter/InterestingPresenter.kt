@@ -2,13 +2,16 @@ package com.project.gosdaq.presenter
 
 import android.util.Log
 import com.project.gosdaq.contract.InterestingContract
-import com.project.gosdaq.data.InterestingEntity
-import com.project.gosdaq.data.interesting.response.InterestingResponse
-import com.project.gosdaq.data.interesting.response.InterestingResponseData
+import com.project.gosdaq.data.room.InterestingEntity
+import com.project.gosdaq.data.interesting.InterestingResponse
+import com.project.gosdaq.data.interesting.InterestingResponseData
+import com.project.gosdaq.data.available.IsAvailableTickerResponse
 import com.project.gosdaq.repository.GosdaqRepository
 import com.project.gosdaq.repository.local.InterestingLocalDataSourceImpl
 import com.project.gosdaq.repository.remote.GosdaqServiceDataSourceImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -75,6 +78,34 @@ class InterestingPresenter(
 
     override suspend fun insertInterestingData(newInterestingData: String) {
         gosdaqRepository.insertInterestingData(InterestingEntity(newInterestingData))
+        val data = getInterestingDataInformation(listOf(InterestingEntity(newInterestingData)))
+        interestingRecyclerViewData.add(data.data[0])
+        withContext(Dispatchers.Main){
+            interestingView.updateInterestingRecyclerView()
+        }
     }
 
+    suspend fun isAvailableTicker(ticker: String, regionRadioButtonStatus: String): IsAvailableTickerResponse {
+        return suspendCoroutine { continuation ->
+            gosdaqRepository.isAvailableTicker(
+                ticker, regionRadioButtonStatus,
+                object : GosdaqServiceDataSourceImpl.AvailableTickerCallback {
+                    override fun onResponse(isAvailableTickerResponse: IsAvailableTickerResponse) {
+                        if(isAvailableTickerResponse.code != 500){
+                            CoroutineScope(Dispatchers.IO).launch {
+                                insertInterestingData(isAvailableTickerResponse.data.ticker)
+                            }
+                            continuation.resume(isAvailableTickerResponse)
+                        }else {
+                            Log.i(TAG, "isNotAvailableTicker")
+                        }
+                    }
+                    override fun onFailure(e: Throwable) {
+                        Log.i(TAG, e.message.toString())
+                        continuation.resumeWithException(e)
+                    }
+                }
+            )
+        }
+    }
 }

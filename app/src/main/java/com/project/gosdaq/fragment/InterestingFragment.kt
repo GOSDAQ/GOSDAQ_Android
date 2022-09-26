@@ -11,8 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
-import com.project.gosdaq.data.interesting.response.InterestingResponseData
+import com.project.gosdaq.data.interesting.InterestingResponseData
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
+import com.project.gosdaq.dialog.AddInterestingDialog
 import com.project.gosdaq.repository.GosdaqRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,12 +74,11 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
 
     override fun setFloatingActionButton() {
         binding.addInteresting.setOnClickListener {
-
-            // 데이터 유효 확인
-
-            lifecycleScope.launch(Dispatchers.IO) {
-                mainPresenter.insertInterestingData("SBUX")
-            }
+            AddInterestingDialog(mainPresenter).show(activity?.supportFragmentManager!!, "")
         }
+    }
+
+    override fun updateInterestingRecyclerView() {
+        adapter.notifyDataSetChanged()
     }
 }

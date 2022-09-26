@@ -1,4 +1,4 @@
-package com.project.gosdaq.data
+package com.project.gosdaq.data.room
 
 import android.content.Context
 import androidx.room.Database

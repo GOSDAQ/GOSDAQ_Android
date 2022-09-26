@@ -1,6 +1,6 @@
 package com.project.gosdaq.repository.local
 
-import com.project.gosdaq.data.InterestingEntity
+import com.project.gosdaq.data.room.InterestingEntity
 
 interface InterestingLocalDataSourceImpl {
     interface LoadInterestingDataCallback {

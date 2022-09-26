@@ -1,8 +1,8 @@
 package com.project.gosdaq.repository.local
 
 import android.content.Context
-import com.project.gosdaq.data.InterestingDatabase
-import com.project.gosdaq.data.InterestingEntity
+import com.project.gosdaq.data.room.InterestingDatabase
+import com.project.gosdaq.data.room.InterestingEntity
 import java.lang.Exception
 
 class InterestingLocalDataSource(context: Context) : InterestingLocalDataSourceImpl {

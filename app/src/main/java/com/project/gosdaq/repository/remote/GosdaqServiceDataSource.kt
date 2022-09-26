@@ -1,9 +1,9 @@
 package com.project.gosdaq.repository.remote
 
-import android.util.Log
 import com.project.gosdaq.BuildConfig
-import com.project.gosdaq.data.InterestingEntity
-import com.project.gosdaq.data.interesting.response.InterestingResponse
+import com.project.gosdaq.data.room.InterestingEntity
+import com.project.gosdaq.data.interesting.InterestingResponse
+import com.project.gosdaq.data.available.IsAvailableTickerResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,9 +56,52 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
                 }
 
                 fun retryOnFailure(call: Call<InterestingResponse>) {
-                    Log.i(TAG, "onFailure, retry $onFailureRetryCount times")
                     call.clone().enqueue(this)
                 }
             })
+    }
+
+    override fun isAvailableTicker(
+        ticker: String,
+        region: String,
+        availableTickerCallback: GosdaqServiceDataSourceImpl.AvailableTickerCallback
+    ) {
+        val gosdaqService: GosdaqServiceApi = gosdaqBuilder.create(GosdaqServiceApi::class.java)
+
+        return when(region){
+            "KR" -> {
+                gosdaqService.isAvailableKrTicker(ticker, region)
+                    .enqueue(object: Callback<IsAvailableTickerResponse>{
+                        override fun onResponse(
+                            call: Call<IsAvailableTickerResponse>,
+                            response: Response<IsAvailableTickerResponse>
+                        ) {
+                            availableTickerCallback.onResponse(response.body()!!)
+                        }
+
+                        override fun onFailure(call: Call<IsAvailableTickerResponse>, t: Throwable) {
+                            availableTickerCallback.onFailure(t)
+                        }
+
+                    })
+            }
+
+            else -> {
+                gosdaqService.isAvailableUsTicker(ticker)
+                    .enqueue(object: Callback<IsAvailableTickerResponse>{
+                        override fun onResponse(
+                            call: Call<IsAvailableTickerResponse>,
+                            response: Response<IsAvailableTickerResponse>
+                        ) {
+                            availableTickerCallback.onResponse(response.body()!!)
+                        }
+
+                        override fun onFailure(call: Call<IsAvailableTickerResponse>, t: Throwable) {
+                            availableTickerCallback.onFailure(t)
+                        }
+
+                    })
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.project.gosdaq.repository
 
 import android.content.Context
-import com.project.gosdaq.data.InterestingEntity
+import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.repository.local.InterestingLocalDataSourceImpl
 import com.project.gosdaq.repository.local.InterestingLocalDataSource
 import com.project.gosdaq.repository.remote.GosdaqServiceDataSource
@@ -35,5 +35,9 @@ class GosdaqRepository(context: Context) : InterestingLocalDataSourceImpl, Gosda
         stockDataCallback: GosdaqServiceDataSourceImpl.StockDataCallback
     ) {
         gosdaqServiceDataSource.getStockInformation(stockNameList, stockDataCallback)
+    }
+
+    override fun isAvailableTicker(ticker: String, region: String, availableTickerCallback: GosdaqServiceDataSourceImpl.AvailableTickerCallback) {
+        gosdaqServiceDataSource.isAvailableTicker(ticker, region, availableTickerCallback)
     }
 }
