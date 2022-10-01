@@ -11,8 +11,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
-    private val TAG = this.javaClass.simpleName
-
     private val gosdaqBuilder = Retrofit.Builder()
         .baseUrl(BuildConfig.API_URL)
         .addConverterFactory(GsonConverterFactory.create())

@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -22,8 +23,6 @@ class InterestingPresenter(
     private val gosdaqRepository: GosdaqRepository
 ) : InterestingContract.InterestingPresenter {
 
-    private val TAG = this.javaClass.simpleName
-
     private lateinit var interestingRecyclerViewData: MutableList<InterestingResponseData>
 
     override suspend fun setInterestingDataList() {
@@ -31,8 +30,7 @@ class InterestingPresenter(
         val stockInformation = getInterestingDataInformation(localInterestingStockList)
 
         withContext(Dispatchers.Main) {
-            Log.i(TAG, "code: ${stockInformation.code}")
-            Log.i(TAG, "msg: ${stockInformation.msg}")
+            Timber.i("InterestingDataInformation ResponseCode: ${stockInformation.code} / ${stockInformation.msg}")
 
             if(stockInformation.code == 200){
                 interestingRecyclerViewData = stockInformation.data
@@ -49,11 +47,11 @@ class InterestingPresenter(
             gosdaqRepository.loadInterestingDataList(object :
                 InterestingLocalDataSourceImpl.LoadInterestingDataCallback {
                 override fun onLoaded(interestingDataList: List<InterestingEntity>) {
-                    Log.i(TAG, "Load data: $interestingDataList")
+                    Timber.i("Local Data Size: ${interestingDataList.size}")
                     continuation.resume(interestingDataList)
                 }
                 override fun onLoadFailed() {
-                    Log.i(TAG, "Failed to load data")
+                    Timber.i("Failed to Local Data")
                     continuation.resume(listOf<InterestingEntity>())
                 }
             })
@@ -91,17 +89,18 @@ class InterestingPresenter(
                 ticker, regionRadioButtonStatus,
                 object : GosdaqServiceDataSourceImpl.AvailableTickerCallback {
                     override fun onResponse(isAvailableTickerResponse: IsAvailableTickerResponse) {
+                        Timber.i("isAvailableTicker ResponseCode: ${isAvailableTickerResponse.code} / ${isAvailableTickerResponse.msg}")
                         if(isAvailableTickerResponse.code != 500){
                             CoroutineScope(Dispatchers.IO).launch {
                                 insertInterestingData(isAvailableTickerResponse.data.ticker)
                             }
                             continuation.resume(isAvailableTickerResponse)
                         }else {
-                            Log.i(TAG, "isNotAvailableTicker")
+                            Timber.i("$ticker is unavailable ticker")
                         }
                     }
                     override fun onFailure(e: Throwable) {
-                        Log.i(TAG, e.message.toString())
+                        Timber.i("Failed to check, $ticker is available")
                         continuation.resumeWithException(e)
                     }
                 }
