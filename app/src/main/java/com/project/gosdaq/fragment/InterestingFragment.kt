@@ -20,9 +20,7 @@ import kotlinx.coroutines.launch
 
 class InterestingFragment : Fragment(), InterestingContract.InterestingView {
 
-    private val TAG = this.javaClass.simpleName
     private val gosdaqRepository: GosdaqRepository by lazy {
-        Log.i(TAG, "GosdaqRepository Init")
         GosdaqRepository.getInstance(requireContext())
     }
 
