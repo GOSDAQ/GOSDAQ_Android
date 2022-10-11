@@ -6,6 +6,7 @@ import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
 import com.project.gosdaq.data.interesting.InterestingResponseData
 import com.project.gosdaq.data.available.IsAvailableTickerResponse
+import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.repository.GosdaqRepository
 import com.project.gosdaq.repository.local.InterestingLocalDataSourceImpl
 import com.project.gosdaq.repository.remote.GosdaqServiceDataSourceImpl
@@ -83,10 +84,10 @@ class InterestingPresenter(
         }
     }
 
-    suspend fun isAvailableTicker(ticker: String, regionRadioButtonStatus: String): IsAvailableTickerResponse {
+    suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse {
         return suspendCoroutine { continuation ->
             gosdaqRepository.isAvailableTicker(
-                ticker, regionRadioButtonStatus,
+                ticker, region,
                 object : GosdaqServiceDataSourceImpl.AvailableTickerCallback {
                     override fun onResponse(isAvailableTickerResponse: IsAvailableTickerResponse) {
                         Timber.i("isAvailableTicker ResponseCode: ${isAvailableTickerResponse.code} / ${isAvailableTickerResponse.msg}")

@@ -3,6 +3,7 @@ package com.project.gosdaq.repository.remote
 import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
 import com.project.gosdaq.data.available.IsAvailableTickerResponse
+import com.project.gosdaq.data.enum.Region
 
 interface GosdaqServiceDataSourceImpl {
     interface StockDataCallback {
@@ -22,7 +23,7 @@ interface GosdaqServiceDataSourceImpl {
 
     fun isAvailableTicker(
         ticker: String,
-        region: String,
+        region: Region,
         availableTickerCallback: AvailableTickerCallback
     )
 }
