@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.databinding.DialogRequestTickerBinding
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.repository.GosdaqRepository
@@ -41,8 +42,8 @@ class AddInterestingDialog(presenter: InterestingPresenter) : DialogFragment() {
 
         this.binding.addTickerButton.setOnClickListener {
             val regionRadioButtonStatus = when (binding.usRadioButton.isChecked) {
-                true -> "US"
-                else -> "KR"
+                true -> Region.US()
+                else -> Region.KR()
             }
             val inputTicker = this.binding.tickerEditText.text.toString()
             lifecycleScope.launch(Dispatchers.IO) {

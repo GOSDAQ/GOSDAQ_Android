@@ -4,6 +4,7 @@ import com.project.gosdaq.BuildConfig
 import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
 import com.project.gosdaq.data.available.IsAvailableTickerResponse
+import com.project.gosdaq.data.enum.Region
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,6 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
+
     private val gosdaqBuilder = Retrofit.Builder()
         .baseUrl(BuildConfig.API_URL)
         .addConverterFactory(GsonConverterFactory.create())
@@ -61,14 +63,14 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
 
     override fun isAvailableTicker(
         ticker: String,
-        region: String,
+        region: Region,
         availableTickerCallback: GosdaqServiceDataSourceImpl.AvailableTickerCallback
     ) {
         val gosdaqService: GosdaqServiceApi = gosdaqBuilder.create(GosdaqServiceApi::class.java)
 
         return when(region){
-            "KR" -> {
-                gosdaqService.isAvailableKrTicker(ticker, region)
+            is Region.KR -> {
+                gosdaqService.isAvailableKrTicker(ticker, region.countryName)
                     .enqueue(object: Callback<IsAvailableTickerResponse>{
                         override fun onResponse(
                             call: Call<IsAvailableTickerResponse>,
@@ -84,7 +86,7 @@ class GosdaqServiceDataSource : GosdaqServiceDataSourceImpl {
                     })
             }
 
-            else -> {
+            is Region.US -> {
                 gosdaqService.isAvailableUsTicker(ticker)
                     .enqueue(object: Callback<IsAvailableTickerResponse>{
                         override fun onResponse(
