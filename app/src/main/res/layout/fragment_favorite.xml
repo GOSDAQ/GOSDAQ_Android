@@ -48,14 +48,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/add_interesting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:src="@drawable/ic_baseline_add_24"
-                android:layout_margin="10dp"
-                android:contentDescription="TODO" />
         </FrameLayout>
     </LinearLayout>
 </layout>

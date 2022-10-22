@@ -22,17 +22,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Title"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/stock_name2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Sub Title"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/stock_name"
+                app:layout_constraintStart_toEndOf="@+id/stock_name"
+                app:layout_constraintTop_toTopOf="@+id/stock_name" />
 
             <TextView
                 android:id="@+id/stock_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:text="Sub Title"
-                android:textSize="15sp"
+                android:textSize="25sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/stock_name" />
 
@@ -43,8 +56,10 @@
                 android:layout_marginLeft="10dp"
                 android:text="10%"
                 android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@+id/stock_price"
                 app:layout_constraintStart_toEndOf="@+id/stock_price"
                 app:layout_constraintTop_toTopOf="@+id/stock_price" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>

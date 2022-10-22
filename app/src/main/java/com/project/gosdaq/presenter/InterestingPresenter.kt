@@ -1,10 +1,9 @@
 package com.project.gosdaq.presenter
 
-import android.util.Log
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
-import com.project.gosdaq.data.interesting.InterestingResponseData
+import com.project.gosdaq.data.interesting.InterestingResponseList
 import com.project.gosdaq.data.available.IsAvailableTickerResponse
 import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.repository.GosdaqRepository
@@ -24,7 +23,7 @@ class InterestingPresenter(
     private val gosdaqRepository: GosdaqRepository
 ) : InterestingContract.InterestingPresenter {
 
-    private lateinit var interestingRecyclerViewData: MutableList<InterestingResponseData>
+    private lateinit var interestingRecyclerViewData: MutableList<InterestingResponseList>
 
     override suspend fun setInterestingDataList() {
         val localInterestingStockList = getLocalInterestingDataList()
@@ -34,7 +33,7 @@ class InterestingPresenter(
             Timber.i("InterestingDataInformation ResponseCode: ${stockInformation.code} / ${stockInformation.msg}")
 
             if(stockInformation.code == 200){
-                interestingRecyclerViewData = stockInformation.data
+                interestingRecyclerViewData = stockInformation.data.list
                 interestingView.initInterestingRecyclerView(interestingRecyclerViewData)
                 interestingView.setShimmerVisibility(false)
             }else{
@@ -77,8 +76,8 @@ class InterestingPresenter(
 
     override suspend fun insertInterestingData(newInterestingData: String) {
         gosdaqRepository.insertInterestingData(InterestingEntity(newInterestingData))
-        val data = getInterestingDataInformation(listOf(InterestingEntity(newInterestingData)))
-        interestingRecyclerViewData.add(data.data[0])
+        val newData = getInterestingDataInformation(listOf(InterestingEntity(newInterestingData)))
+        interestingRecyclerViewData.add(newData.data.list[0])
         withContext(Dispatchers.Main){
             interestingView.updateInterestingRecyclerView()
         }
