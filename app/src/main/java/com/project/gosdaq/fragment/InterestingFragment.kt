@@ -1,7 +1,6 @@
 package com.project.gosdaq.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
-import com.project.gosdaq.data.interesting.InterestingResponseData
+import com.project.gosdaq.data.interesting.InterestingResponseList
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
 import com.project.gosdaq.dialog.AddInterestingDialog
 import com.project.gosdaq.repository.GosdaqRepository
@@ -46,7 +45,6 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         lifecycleScope.launch(Dispatchers.IO) {
             mainPresenter.setInterestingDataList()
         }
-        setFloatingActionButton()
     }
 
     override fun setShimmerVisibility(visibility: Boolean) {
@@ -64,19 +62,17 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         }
     }
 
-    override fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseData>) {
+    override fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseList>) {
         adapter = InterestingAdaptor(interestingResponseData)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    override fun setFloatingActionButton() {
-        binding.addInteresting.setOnClickListener {
-            AddInterestingDialog(mainPresenter).show(activity?.supportFragmentManager!!, "")
-        }
-    }
-
     override fun updateInterestingRecyclerView() {
         adapter.notifyDataSetChanged()
+    }
+
+    fun addInterestingItem(){
+        AddInterestingDialog(mainPresenter).show(activity?.supportFragmentManager!!, "")
     }
 }

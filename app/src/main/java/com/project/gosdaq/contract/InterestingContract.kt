@@ -2,13 +2,12 @@ package com.project.gosdaq.contract
 
 import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
-import com.project.gosdaq.data.interesting.InterestingResponseData
+import com.project.gosdaq.data.interesting.InterestingResponseList
 
 interface InterestingContract {
     interface InterestingView {
         fun setShimmerVisibility(visibility: Boolean)
-        fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseData>)
-        fun setFloatingActionButton()
+        fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseList>)
         fun updateInterestingRecyclerView()
     }
 

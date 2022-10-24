@@ -7,14 +7,17 @@ import com.project.gosdaq.*
 import com.project.gosdaq.databinding.ActivityMainBinding
 import com.project.gosdaq.fragment.InterestingFragment
 import com.project.gosdaq.fragment.HaveFragment
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
+
+    private val interestingFragment = InterestingFragment()
+    private val haveFragment = HaveFragment()
 
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -22,12 +25,10 @@ class MainActivity : AppCompatActivity() {
 
         initFragment()
         setBottomNavigationView()
+        setFloatingActionButton()
     }
 
     private fun initFragment() {
-        val interestingFragment = InterestingFragment()
-        val haveFragment = HaveFragment()
-
         supportFragmentManager.beginTransaction().apply {
             add(R.id.frame_layout, interestingFragment, "favorite_fragment")
                 .show(interestingFragment)
@@ -57,6 +58,20 @@ class MainActivity : AppCompatActivity() {
                 else -> {
                     false
                 }
+            }
+        }
+    }
+
+    private fun setFloatingActionButton(){
+        binding.addItem.setOnClickListener {
+            val fragmentManager = supportFragmentManager
+            val interestingFragment = fragmentManager.findFragmentByTag("favorite_fragment")
+            val haveFragment = fragmentManager.findFragmentByTag("have_fragment")
+
+            if(interestingFragment!!.isVisible){
+                this.interestingFragment.addInterestingItem()
+            }else{
+                Timber.i("Have Fragment Visible")
             }
         }
     }
