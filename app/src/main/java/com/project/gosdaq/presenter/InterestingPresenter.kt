@@ -23,23 +23,7 @@ class InterestingPresenter(
     private val gosdaqRepository: GosdaqRepository
 ) : InterestingContract.InterestingPresenter {
 
-    private var interestingTickerList: MutableList<String> = mutableListOf()
-
     private lateinit var interestingRecyclerViewData: MutableList<InterestingResponseList>
-
-    suspend fun filterInterestingData(){
-        val localInterestingStockList = getLocalInterestingDataList()
-        interestingTickerList.clear()
-        for(item in localInterestingStockList){
-            if (item.ticker.contains(".KQ")){
-                interestingTickerList.add(item.ticker.replace(".KQ", ""))
-            }else if (item.ticker.contains(".KS")){
-                interestingTickerList.add(item.ticker.replace(".KS", ""))
-            }else{
-                interestingTickerList.add(item.ticker)
-            }
-        }
-    }
 
     override suspend fun setInterestingDataList() {
         val localInterestingStockList = getLocalInterestingDataList()
@@ -106,33 +90,33 @@ class InterestingPresenter(
     }
 
     suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse {
-        filterInterestingData()
         return suspendCoroutine { continuation ->
-            if (!interestingTickerList.contains(ticker)) {
-                gosdaqRepository.isAvailableTicker(
-                    ticker, region,
-                    object : GosdaqServiceDataSourceImpl.AvailableTickerCallback {
-                        override fun onResponse(isAvailableTickerResponse: IsAvailableTickerResponse) {
-                            Timber.i("isAvailableTicker ResponseCode: ${isAvailableTickerResponse.code} / ${isAvailableTickerResponse.msg}")
-                            if (isAvailableTickerResponse.code != 500) {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    insertInterestingData(isAvailableTickerResponse.data.ticker)
-                                }
-                                continuation.resume(isAvailableTickerResponse)
-                            } else {
-                                Timber.i("$ticker is unavailable ticker")
-                            }
-                        }
 
-                        override fun onFailure(e: Throwable) {
-                            Timber.i("Failed to check, $ticker is available")
-                            continuation.resumeWithException(e)
+            interestingRecyclerViewData.find { interestingResponseList ->
+                interestingResponseList.ticker.contains(ticker)
+            }?.let { return@suspendCoroutine }
+
+            gosdaqRepository.isAvailableTicker(
+                ticker, region,
+                object : GosdaqServiceDataSourceImpl.AvailableTickerCallback {
+                    override fun onResponse(isAvailableTickerResponse: IsAvailableTickerResponse) {
+                        Timber.i("isAvailableTicker ResponseCode: ${isAvailableTickerResponse.code} / ${isAvailableTickerResponse.msg}")
+                        if (isAvailableTickerResponse.code != 500) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                insertInterestingData(isAvailableTickerResponse.data.ticker)
+                            }
+                            continuation.resume(isAvailableTickerResponse)
+                        } else {
+                            Timber.i("$ticker is unavailable ticker")
                         }
                     }
-                )
-            } else {
-                Timber.i("${ticker} is conflict!")
-            }
+
+                    override fun onFailure(e: Throwable) {
+                        Timber.i("Failed to check, $ticker is available")
+                        continuation.resumeWithException(e)
+                    }
+                }
+            )
         }
     }
 }
