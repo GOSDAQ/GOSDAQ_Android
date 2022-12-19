@@ -93,7 +93,7 @@ class InterestingPresenter(
         return suspendCoroutine { continuation ->
 
             interestingRecyclerViewData.find { interestingResponseList ->
-                interestingResponseList.ticker.contains(ticker)
+                interestingResponseList.ticker.contains(ticker.uppercase())
             }?.let { return@suspendCoroutine }
 
             gosdaqRepository.isAvailableTicker(
