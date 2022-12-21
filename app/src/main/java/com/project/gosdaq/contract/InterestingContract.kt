@@ -1,20 +1,20 @@
 package com.project.gosdaq.contract
 
+import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
-import com.project.gosdaq.data.interesting.InterestingResponseList
+import com.project.gosdaq.data.interesting.InterestingResponseDataElement
+import kotlinx.coroutines.CoroutineScope
 
 interface InterestingContract {
     interface InterestingView {
         fun setShimmerVisibility(visibility: Boolean)
-        fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseList>)
-        fun updateInterestingRecyclerView()
+        fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseDataElement>)
+        fun updateInterestingRecyclerView(newData: MutableList<InterestingResponseDataElement>)
     }
 
     interface InterestingPresenter {
-        suspend fun setInterestingDataList()
-        suspend fun getLocalInterestingDataList(): List<InterestingEntity>
-        suspend fun getInterestingDataInformation(stockNameList: List<InterestingEntity>): InterestingResponse
-        suspend fun insertInterestingData(newInterestingData: String)
+        fun setInterestingDataList(scope: CoroutineScope)
+        fun insertInterestingData(scope: CoroutineScope, ticker: String, region: Region)
     }
 }

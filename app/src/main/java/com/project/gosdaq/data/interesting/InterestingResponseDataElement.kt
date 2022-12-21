@@ -1,6 +1,6 @@
 package com.project.gosdaq.data.interesting
 
-data class InterestingResponseList(
+data class InterestingResponseDataElement(
     val ticker: String,
     val name: String,
     val price: Float,

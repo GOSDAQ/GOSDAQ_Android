@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
-import com.project.gosdaq.data.interesting.InterestingResponseList
+import com.project.gosdaq.data.interesting.InterestingResponseDataElement
 import com.project.gosdaq.databinding.FragmentFavoriteBinding
 import com.project.gosdaq.dialog.AddInterestingDialog
 import com.project.gosdaq.repository.GosdaqRepository
@@ -42,9 +42,7 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainPresenter = InterestingPresenter(this@InterestingFragment, gosdaqRepository)
-        lifecycleScope.launch(Dispatchers.IO) {
-            mainPresenter.setInterestingDataList()
-        }
+        mainPresenter.setInterestingDataList(lifecycleScope)
     }
 
     override fun setShimmerVisibility(visibility: Boolean) {
@@ -62,17 +60,19 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
         }
     }
 
-    override fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseList>) {
-        adapter = InterestingAdaptor(interestingResponseData)
+    override fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseDataElement>) {
+        adapter = InterestingAdaptor().apply {
+            updateData(interestingResponseData)
+        }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    override fun updateInterestingRecyclerView() {
-        adapter.notifyDataSetChanged()
+    override fun updateInterestingRecyclerView(newData: MutableList<InterestingResponseDataElement>) {
+        adapter.updateData(newData)
     }
 
     fun addInterestingItem(){
-        AddInterestingDialog(mainPresenter).show(activity?.supportFragmentManager!!, "")
+        AddInterestingDialog(mainPresenter, lifecycleScope).show(activity?.supportFragmentManager!!, "")
     }
 }

@@ -4,14 +4,16 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.project.gosdaq.activity.InterestingActivity
-import com.project.gosdaq.data.interesting.InterestingResponseList
+import com.project.gosdaq.data.interesting.InterestingResponseDataElement
 import com.project.gosdaq.databinding.ItemFavoriteRecyclerViewBinding
 import timber.log.Timber
 
-class InterestingAdaptor(private val data: MutableList<InterestingResponseList>) :
-    RecyclerView.Adapter<InterestingAdaptor.FavoriteViewHolder>() {
+class InterestingAdaptor : RecyclerView.Adapter<InterestingAdaptor.FavoriteViewHolder>() {
+
+    private val data: MutableList<InterestingResponseDataElement> = mutableListOf()
 
     inner class FavoriteViewHolder(private val binding: ItemFavoriteRecyclerViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -24,7 +26,7 @@ class InterestingAdaptor(private val data: MutableList<InterestingResponseList>)
             }
         }
 
-        fun bind(data: InterestingResponseList) {
+        fun bind(data: InterestingResponseDataElement) {
             binding.stockName.text = data.name
             binding.stockName2.text = data.ticker
 
@@ -61,5 +63,15 @@ class InterestingAdaptor(private val data: MutableList<InterestingResponseList>)
 
     override fun getItemCount(): Int {
         return data.size
+    }
+
+    fun updateData(newData: MutableList<InterestingResponseDataElement>) {
+        val interestingDiffUtil = InterestingDiffUtil(data, newData)
+        val result = DiffUtil.calculateDiff(interestingDiffUtil)
+        with(data){
+            clear()
+            addAll(newData)
+        }
+        result.dispatchUpdatesTo(this)
     }
 }
