@@ -1,13 +1,20 @@
 package com.project.gosdaq.repository.local
 
+import android.content.Context
+import com.project.gosdaq.data.room.InterestingDatabase
 import com.project.gosdaq.data.room.InterestingEntity
+import timber.log.Timber
 
-interface InterestingLocalDataSourceImpl {
-    interface LoadInterestingDataCallback {
-        fun onLoaded(interestingDataList: List<InterestingEntity>)
-        fun onLoadFailed()
+class InterestingLocalDataSourceImpl(context: Context) : InterestingLocalDataSource {
+
+    private val interestingDatabase = InterestingDatabase.getDatabase(context)
+
+    override suspend fun loadInterestingDataList(): List<InterestingEntity> {
+        return interestingDatabase.interestingDao().getAll()
     }
 
-    fun loadInterestingDataList(loadInterestingDataCallback: LoadInterestingDataCallback)
-    fun insertInterestingData(newInterestingEntity: InterestingEntity)
+    override suspend fun insertInterestingData(newInterestingEntity: InterestingEntity) {
+        Timber.i("insert")
+        interestingDatabase.interestingDao().insert(newInterestingEntity)
+    }
 }

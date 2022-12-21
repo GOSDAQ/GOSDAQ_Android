@@ -3,120 +3,69 @@ package com.project.gosdaq.presenter
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
-import com.project.gosdaq.data.interesting.InterestingResponseList
-import com.project.gosdaq.data.available.IsAvailableTickerResponse
+import com.project.gosdaq.data.interesting.InterestingResponseDataElement
 import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.repository.GosdaqRepository
-import com.project.gosdaq.repository.local.InterestingLocalDataSourceImpl
-import com.project.gosdaq.repository.remote.GosdaqServiceDataSourceImpl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import timber.log.Timber
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class InterestingPresenter(
     private val interestingView: InterestingContract.InterestingView,
     private val gosdaqRepository: GosdaqRepository
 ) : InterestingContract.InterestingPresenter {
 
-    private lateinit var interestingRecyclerViewData: MutableList<InterestingResponseList>
+    private lateinit var interestingRecyclerViewData: MutableList<InterestingResponseDataElement>
 
-    override suspend fun setInterestingDataList() {
-        val localInterestingStockList = getLocalInterestingDataList()
-        val stockInformation = getInterestingDataInformation(localInterestingStockList)
+    override fun setInterestingDataList(scope: CoroutineScope) {
+        scope.launch(Dispatchers.IO) {
+            val localInterestingStockList = getLocalInterestingDataList()
+            val stockInformation = getInterestingDataInformation(localInterestingStockList)
 
-        withContext(Dispatchers.Main) {
-            Timber.i("InterestingDataInformation ResponseCode: ${stockInformation.code} / ${stockInformation.msg}")
+            withContext(Dispatchers.Main) {
+                Timber.i("InterestingDataInformation ResponseCode: ${stockInformation.code} / ${stockInformation.msg}")
+                interestingRecyclerViewData = stockInformation.data.list
+                interestingRecyclerViewData.reverse()
+                Timber.i("?")
+                interestingView.initInterestingRecyclerView(interestingRecyclerViewData)
+                interestingView.setShimmerVisibility(false)
+            }
+        }
+    }
 
-            when (stockInformation.code) {
-                200 -> {
-                    interestingRecyclerViewData = stockInformation.data.list
-                    interestingView.initInterestingRecyclerView(interestingRecyclerViewData)
-                    interestingView.setShimmerVisibility(false)
+    override fun insertInterestingData(scope: CoroutineScope, ticker: String, region: Region) {
+        scope.launch(Dispatchers.IO) {
+            when (val isAvailableTicker = isAvailableTicker(ticker, region)) {
+                null -> {
+                    Timber.i("Cannot ticker")
                 }
                 else -> {
-                    // Error로 인해 데이터를 받지 못했을 때 동작 필요
+                    val newTicker = listOf(InterestingEntity(ticker=isAvailableTicker))
+                    val interestingResponseDataElement = gosdaqRepository.getStockInformation(newTicker).data.list[0]
+
+                    gosdaqRepository.insertInterestingData(InterestingEntity(ticker=interestingResponseDataElement.ticker))
+
+                    withContext(Dispatchers.Main){
+                        interestingRecyclerViewData.add(0, interestingResponseDataElement)
+                        interestingView.updateInterestingRecyclerView(interestingRecyclerViewData)
+                    }
                 }
             }
         }
     }
 
-    override suspend fun getLocalInterestingDataList(): List<InterestingEntity> {
-        return suspendCoroutine { continuation ->
-            gosdaqRepository.loadInterestingDataList(object :
-                InterestingLocalDataSourceImpl.LoadInterestingDataCallback {
-                override fun onLoaded(interestingDataList: List<InterestingEntity>) {
-                    Timber.i("Local Data Size: ${interestingDataList.size}")
-                    continuation.resume(interestingDataList)
-                }
-
-                override fun onLoadFailed() {
-                    Timber.i("Failed to Local Data")
-                    continuation.resume(listOf<InterestingEntity>())
-                }
-            })
-        }
+    private suspend fun getLocalInterestingDataList(): List<InterestingEntity> {
+        return gosdaqRepository.loadInterestingDataList()
     }
 
-    override suspend fun getInterestingDataInformation(stockNameList: List<InterestingEntity>): InterestingResponse {
-        return suspendCoroutine { continuation ->
-            gosdaqRepository.getStockInformation(
-                stockNameList,
-                object : GosdaqServiceDataSourceImpl.StockDataCallback {
-                    override fun onResponse(interestingResponse: InterestingResponse) {
-                        continuation.resume(interestingResponse)
-                    }
-
-                    override fun onFailure(e: Throwable) {
-                        continuation.resumeWithException(e)
-                    }
-                })
-        }
+    private suspend fun getInterestingDataInformation(stockNameList: List<InterestingEntity>): InterestingResponse {
+        return gosdaqRepository.getStockInformation(stockNameList)
     }
 
-    override suspend fun insertInterestingData(newInterestingData: String) {
-        val newInterestingDataEntity = InterestingEntity(newInterestingData)
+    private suspend fun isAvailableTicker(ticker: String, region: Region): String? {
+        interestingRecyclerViewData.find { interestingResponseList ->
+            interestingResponseList.ticker.contains(ticker.uppercase())
+        }?.let { return null }
 
-        gosdaqRepository.insertInterestingData(newInterestingDataEntity)
-        val newData = getInterestingDataInformation(listOf(newInterestingDataEntity))
-        interestingRecyclerViewData.add(newData.data.list[0])
-        withContext(Dispatchers.Main) {
-            interestingView.updateInterestingRecyclerView()
-        }
-    }
-
-    suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse {
-        return suspendCoroutine { continuation ->
-
-            interestingRecyclerViewData.find { interestingResponseList ->
-                interestingResponseList.ticker.contains(ticker.uppercase())
-            }?.let { return@suspendCoroutine }
-
-            gosdaqRepository.isAvailableTicker(
-                ticker, region,
-                object : GosdaqServiceDataSourceImpl.AvailableTickerCallback {
-                    override fun onResponse(isAvailableTickerResponse: IsAvailableTickerResponse) {
-                        Timber.i("isAvailableTicker ResponseCode: ${isAvailableTickerResponse.code} / ${isAvailableTickerResponse.msg}")
-                        if (isAvailableTickerResponse.code != 500) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                insertInterestingData(isAvailableTickerResponse.data.ticker)
-                            }
-                            continuation.resume(isAvailableTickerResponse)
-                        } else {
-                            Timber.i("$ticker is unavailable ticker")
-                        }
-                    }
-
-                    override fun onFailure(e: Throwable) {
-                        Timber.i("Failed to check, $ticker is available")
-                        continuation.resumeWithException(e)
-                    }
-                }
-            )
-        }
+        return gosdaqRepository.isAvailableTicker(ticker, region).data?.ticker
     }
 }

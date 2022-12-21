@@ -12,17 +12,15 @@ import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.databinding.DialogRequestTickerBinding
 import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.repository.GosdaqRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class AddInterestingDialog(presenter: InterestingPresenter) : DialogFragment() {
+class AddInterestingDialog(private val presenter: InterestingPresenter,
+                           private val scope: CoroutineScope) : DialogFragment() {
 
     private lateinit var binding: DialogRequestTickerBinding
-    private val presenter: InterestingPresenter
-
-    init {
-        this.presenter = presenter
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +44,7 @@ class AddInterestingDialog(presenter: InterestingPresenter) : DialogFragment() {
                 else -> Region.KR()
             }
             val inputTicker = this.binding.tickerEditText.text.toString()
-            lifecycleScope.launch(Dispatchers.IO) {
-                presenter.isAvailableTicker(inputTicker, regionRadioButtonStatus)
-            }
+            presenter.insertInterestingData(scope, inputTicker, regionRadioButtonStatus)
             this.dismiss()
         }
     }

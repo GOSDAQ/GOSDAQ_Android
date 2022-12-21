@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "interesting_data")
 data class InterestingEntity(
-    @PrimaryKey
-    @ColumnInfo(name = "ticker")
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val ticker: String
 )
