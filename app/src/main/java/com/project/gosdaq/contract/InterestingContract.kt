@@ -15,6 +15,5 @@ interface InterestingContract {
 
     interface InterestingPresenter {
         fun setInterestingDataList(scope: CoroutineScope)
-        fun insertInterestingData(scope: CoroutineScope, ticker: String, region: Region)
     }
 }

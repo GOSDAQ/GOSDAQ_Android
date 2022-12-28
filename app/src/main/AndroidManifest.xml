@@ -13,10 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GOSDAQ">
         <activity
-            android:name=".activity.InterestingActivity"
+            android:name=".view.AddActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

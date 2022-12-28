@@ -35,7 +35,7 @@ class GosdaqServiceDataSourceImpl : GosdaqServiceDataSource {
 
         when (requestResponse.isSuccessful) {
             true -> return requestResponse.body()!!
-            false -> throw IllegalAccessError("")
+            false -> throw Exception("")
         }
     }
 
@@ -48,7 +48,7 @@ class GosdaqServiceDataSourceImpl : GosdaqServiceDataSource {
                 }else{
                     Timber.i(requestResponse.message())
                     Timber.i(requestResponse.code().toString())
-                    throw IllegalAccessError("")
+                    throw Exception("")
                 }
             }
             is Region.US -> {

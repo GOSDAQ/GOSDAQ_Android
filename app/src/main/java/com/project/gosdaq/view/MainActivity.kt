@@ -1,48 +1,46 @@
-package com.project.gosdaq.fragment
+package com.project.gosdaq.view
 
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.project.gosdaq.contract.InterestingContract
-import com.project.gosdaq.presenter.InterestingPresenter
 import com.project.gosdaq.adaptor.InterestingAdaptor
+import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.data.interesting.InterestingResponseDataElement
-import com.project.gosdaq.databinding.FragmentFavoriteBinding
-import com.project.gosdaq.dialog.AddInterestingDialog
+import com.project.gosdaq.databinding.ActivityMainBinding
 import com.project.gosdaq.repository.GosdaqRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class InterestingFragment : Fragment(), InterestingContract.InterestingView {
+class MainActivity : AppCompatActivity(), InterestingContract.InterestingView {
+
+    private lateinit var adapter: InterestingAdaptor
 
     private val gosdaqRepository: GosdaqRepository by lazy {
-        GosdaqRepository.getInstance(requireContext())
+        GosdaqRepository.getInstance(this)
+    }
+    private val mainPresenter: MainPresenter by lazy {
+        MainPresenter(this, gosdaqRepository)
     }
 
-    private lateinit var binding: FragmentFavoriteBinding
-    private lateinit var mainPresenter: InterestingPresenter
-    private lateinit var adapter: InterestingAdaptor
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-    }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mainPresenter = InterestingPresenter(this@InterestingFragment, gosdaqRepository)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        setFloatingActionButton()
         mainPresenter.setInterestingDataList(lifecycleScope)
+    }
+
+
+    private fun setFloatingActionButton(){
+        binding.addItem.setOnClickListener {
+            addInterestingItem()
+        }
     }
 
     override fun setShimmerVisibility(visibility: Boolean) {
@@ -65,7 +63,7 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
             updateData(interestingResponseData)
         }
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     override fun updateInterestingRecyclerView(newData: MutableList<InterestingResponseDataElement>) {
@@ -73,6 +71,8 @@ class InterestingFragment : Fragment(), InterestingContract.InterestingView {
     }
 
     fun addInterestingItem(){
-        AddInterestingDialog(mainPresenter, lifecycleScope).show(activity?.supportFragmentManager!!, "")
+        val interestingActivityIntent = Intent(this, AddActivity::class.java)
+        startActivity(interestingActivityIntent)
+        // AddInterestingDialog(mainPresenter, lifecycleScope).show(this.supportFragmentManager, "")
     }
 }
