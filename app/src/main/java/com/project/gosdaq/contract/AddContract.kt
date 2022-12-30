@@ -7,7 +7,9 @@ import com.project.gosdaq.data.interesting.InterestingResponseDataElement
 import kotlinx.coroutines.CoroutineScope
 
 interface AddContract {
-    interface AddView {}
+    interface AddView {
+        fun onAddTickerSuccess()
+    }
 
     interface AddPresenter {
         fun insertInterestingData(scope: CoroutineScope, ticker: String, region: Region)

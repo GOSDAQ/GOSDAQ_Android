@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.gosdaq.adaptor.InterestingAdaptor
 import com.project.gosdaq.contract.InterestingContract
 import com.project.gosdaq.data.interesting.InterestingResponseDataElement
+import com.project.gosdaq.data.room.InterestingData
 import com.project.gosdaq.databinding.ActivityMainBinding
 import com.project.gosdaq.repository.GosdaqRepository
 
@@ -58,10 +59,11 @@ class MainActivity : AppCompatActivity(), InterestingContract.InterestingView {
         }
     }
 
-    override fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseDataElement>) {
+    override fun initInterestingRecyclerView() {
         adapter = InterestingAdaptor().apply {
-            updateData(interestingResponseData)
+            updateData(InterestingData.interestingTickerList)
         }
+
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
     }
@@ -73,6 +75,10 @@ class MainActivity : AppCompatActivity(), InterestingContract.InterestingView {
     fun addInterestingItem(){
         val interestingActivityIntent = Intent(this, AddActivity::class.java)
         startActivity(interestingActivityIntent)
-        // AddInterestingDialog(mainPresenter, lifecycleScope).show(this.supportFragmentManager, "")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        adapter.updateData(InterestingData.interestingTickerList)
     }
 }

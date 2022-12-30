@@ -1,8 +1,12 @@
 package com.project.gosdaq.view
 
+import android.content.Context
+import android.hardware.input.InputManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.core.view.setPadding
 import androidx.lifecycle.lifecycleScope
 import com.project.gosdaq.contract.AddContract
 import com.project.gosdaq.data.enum.Region
@@ -19,7 +23,7 @@ class AddActivity : AppCompatActivity(), AddContract.AddView {
         GosdaqRepository.getInstance(this)
     }
     private val addPresenter: AddPresenter by lazy {
-        AddPresenter(gosdaqRepository)
+        AddPresenter(this, gosdaqRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +55,22 @@ class AddActivity : AppCompatActivity(), AddContract.AddView {
             }
             val inputTicker = this.binding.tickerEditText.text.toString()
 
+            val i = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            i.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
+
+            binding.progressArea.visibility = View.VISIBLE
+
+            lifecycleScope.launch {
+                delay(2000)
+                binding.find.visibility = View.GONE
+                binding.allFind.visibility = View.VISIBLE
+            }
+
             addPresenter.insertInterestingData(lifecycleScope, inputTicker, regionRadioButtonStatus)
         }
+    }
+
+    override fun onAddTickerSuccess() {
+        finish()
     }
 }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
@@ -101,6 +102,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="추가하기" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/progress_area"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:id="@+id/all_find"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="거의 다 찾았어요!!"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/find"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="종목을 찾아보고 있어요!"/>
 
         </LinearLayout>
 

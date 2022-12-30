@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.project.gosdaq.view.AddActivity
 import com.project.gosdaq.data.interesting.InterestingResponseDataElement
 import com.project.gosdaq.databinding.ItemFavoriteRecyclerViewBinding
 import timber.log.Timber
