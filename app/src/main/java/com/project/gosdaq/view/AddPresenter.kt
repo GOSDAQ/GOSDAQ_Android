@@ -19,7 +19,9 @@ class AddPresenter(
         scope.launch(Dispatchers.IO) {
             when (val isAvailableTicker = isAvailableTicker(ticker, region)) {
                 null -> {
-                    Timber.i("Cannot ticker")
+                    withContext(Dispatchers.Main){
+                        addView.onAddTickerFailure(false, ticker)
+                    }
                 }
                 else -> {
                     val newTicker = listOf(InterestingEntity(ticker=isAvailableTicker))
@@ -30,14 +32,13 @@ class AddPresenter(
                     Timber.i(interestingResponseDataElement.toString())
                     InterestingData.interestingTickerList.add(0, interestingResponseDataElement)
 
-                    delay(3000L)
-
-                    addView.onAddTickerSuccess()
+                    withContext(Dispatchers.Main){
+                        addView.onAddTickerSuccess()
+                    }
                 }
             }
         }
     }
-
 
     private suspend fun getInterestingDataInformation(stockNameList: List<InterestingEntity>): InterestingResponse {
         return gosdaqRepository.getStockInformation(stockNameList)
@@ -46,7 +47,10 @@ class AddPresenter(
     private suspend fun isAvailableTicker(ticker: String, region: Region): String? {
         InterestingData.interestingTickerList.find { interestingResponseList ->
             interestingResponseList.ticker.contains(ticker.uppercase())
-        }?.let { return null }
+        }?.let {
+            addView.onAddTickerFailure(true, it.name)
+            return null
+        }
         return gosdaqRepository.isAvailableTicker(ticker, region).data?.ticker
     }
 }

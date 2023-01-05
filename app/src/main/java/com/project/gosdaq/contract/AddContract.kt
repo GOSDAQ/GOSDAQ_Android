@@ -8,7 +8,9 @@ import kotlinx.coroutines.CoroutineScope
 
 interface AddContract {
     interface AddView {
+        fun showElement()
         fun onAddTickerSuccess()
+        fun onAddTickerFailure(isDuplicated: Boolean, ticker: String)
     }
 
     interface AddPresenter {
