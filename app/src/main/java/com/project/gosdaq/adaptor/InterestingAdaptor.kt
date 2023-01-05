@@ -1,12 +1,11 @@
 package com.project.gosdaq.adaptor
 
-import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.project.gosdaq.activity.InterestingActivity
+import com.project.gosdaq.view.AddActivity
 import com.project.gosdaq.data.interesting.InterestingResponseDataElement
 import com.project.gosdaq.databinding.ItemFavoriteRecyclerViewBinding
 import timber.log.Timber
@@ -21,8 +20,6 @@ class InterestingAdaptor : RecyclerView.Adapter<InterestingAdaptor.FavoriteViewH
         init {
             itemView.setOnClickListener {
                 Timber.i(adapterPosition.toString())
-                val interestingActivityIntent = Intent(it.context, InterestingActivity::class.java)
-                it.context.startActivity(interestingActivityIntent)
             }
         }
 

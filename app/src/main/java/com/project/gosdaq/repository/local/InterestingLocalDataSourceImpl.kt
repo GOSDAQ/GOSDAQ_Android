@@ -14,7 +14,6 @@ class InterestingLocalDataSourceImpl(context: Context) : InterestingLocalDataSou
     }
 
     override suspend fun insertInterestingData(newInterestingEntity: InterestingEntity) {
-        Timber.i("insert")
         interestingDatabase.interestingDao().insert(newInterestingEntity)
     }
 }

@@ -9,12 +9,11 @@ import kotlinx.coroutines.CoroutineScope
 interface InterestingContract {
     interface InterestingView {
         fun setShimmerVisibility(visibility: Boolean)
-        fun initInterestingRecyclerView(interestingResponseData: MutableList<InterestingResponseDataElement>)
+        fun initInterestingRecyclerView()
         fun updateInterestingRecyclerView(newData: MutableList<InterestingResponseDataElement>)
     }
 
     interface InterestingPresenter {
         fun setInterestingDataList(scope: CoroutineScope)
-        fun insertInterestingData(scope: CoroutineScope, ticker: String, region: Region)
     }
 }
