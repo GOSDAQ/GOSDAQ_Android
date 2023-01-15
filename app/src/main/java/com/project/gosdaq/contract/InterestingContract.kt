@@ -11,9 +11,11 @@ interface InterestingContract {
         fun setShimmerVisibility(visibility: Boolean)
         fun initInterestingRecyclerView()
         fun updateInterestingRecyclerView(newData: MutableList<InterestingResponseDataElement>)
+        fun initExchange(exchange: String)
     }
 
     interface InterestingPresenter {
-        fun setInterestingDataList(scope: CoroutineScope)
+        fun setInterestingDataList(scope: CoroutineScope, isRefresh: Boolean = false)
+        fun deleteTicker(scope: CoroutineScope, pos: Int)
     }
 }

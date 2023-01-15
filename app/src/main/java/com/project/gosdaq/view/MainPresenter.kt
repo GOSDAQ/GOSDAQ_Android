@@ -5,36 +5,63 @@ import com.project.gosdaq.data.room.InterestingEntity
 import com.project.gosdaq.data.interesting.InterestingResponse
 import com.project.gosdaq.data.room.InterestingData
 import com.project.gosdaq.repository.GosdaqRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
 import timber.log.Timber
+import javax.inject.Inject
 
-class MainPresenter(
-    private val interestingView: InterestingContract.InterestingView,
-    private val gosdaqRepository: GosdaqRepository
+class MainPresenter @AssistedInject constructor(
+    private var gosdaqRepository: GosdaqRepository,
+    @Assisted private val interestingView: InterestingContract.InterestingView
 ) : InterestingContract.InterestingPresenter {
 
-    override fun setInterestingDataList(scope: CoroutineScope) {
+    @AssistedFactory
+    interface MainPresenterFactory {
+        fun create(
+            @Assisted interestingView: InterestingContract.InterestingView
+        ): MainPresenter
+    }
+
+    override fun setInterestingDataList(scope: CoroutineScope, isRefresh: Boolean) {
         scope.launch(Dispatchers.IO) {
-            val localInterestingStockList = getLocalInterestingDataList()
-            val stockInformation = getInterestingDataInformation(localInterestingStockList)
+            val localInterestingStockList = gosdaqRepository.loadInterestingDataList()
+            val stockInformation = async { gosdaqRepository.getStockInformation(localInterestingStockList) }
+            val exchangeResponse = async { gosdaqRepository.getExchange() }
 
             withContext(Dispatchers.Main) {
-                Timber.i("InterestingDataInformation ResponseCode: ${stockInformation.code} / ${stockInformation.msg}")
+                Timber.i("InterestingDataInformation ResponseCode: ${stockInformation.await().code} / ${stockInformation.await().msg}")
 
-                InterestingData.interestingTickerList = stockInformation.data.list
-                InterestingData.interestingTickerList.reverse()
+                when(isRefresh){
+                    true -> {
+                        InterestingData.interestingTickerList = InterestingData.interestingTickerList.subList(0, 1)
+                        InterestingData.interestingTickerList += stockInformation.await().data.list.reversed()
+                        InterestingData.interestingTickerList[0].price = exchangeResponse.await().data.exchange.toFloat()
+                    }
+                    false -> {
+                        InterestingData.interestingTickerList += stockInformation.await().data.list.reversed()
+                        InterestingData.interestingTickerList[0].price = exchangeResponse.await().data.exchange.toFloat()
+                    }
+                }
 
                 interestingView.initInterestingRecyclerView()
                 interestingView.setShimmerVisibility(false)
+
+                interestingView.initExchange(exchangeResponse.await().data.exchange.toString())
             }
         }
     }
 
-    private suspend fun getLocalInterestingDataList(): List<InterestingEntity> {
-        return gosdaqRepository.loadInterestingDataList()
-    }
+    override fun deleteTicker(scope: CoroutineScope, pos: Int){
+        scope.launch(Dispatchers.IO) {
+            Timber.i(InterestingData.interestingTickerList[pos].ticker)
+            gosdaqRepository.deleteInterestingData(InterestingData.interestingTickerList[pos].ticker)
+            InterestingData.interestingTickerList.removeAt(pos)
 
-    private suspend fun getInterestingDataInformation(stockNameList: List<InterestingEntity>): InterestingResponse {
-        return gosdaqRepository.getStockInformation(stockNameList)
+            withContext(Dispatchers.Main){
+                interestingView.updateInterestingRecyclerView(InterestingData.interestingTickerList)
+            }
+        }
     }
 }

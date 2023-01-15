@@ -13,19 +13,22 @@ import com.project.gosdaq.contract.AddContract
 import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.databinding.ActivityAddBinding
 import com.project.gosdaq.repository.GosdaqRepository
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddActivity : AppCompatActivity(), AddContract.AddView {
+@AndroidEntryPoint
+class AddActivity: AppCompatActivity(), AddContract.AddView {
+
+    @Inject
+    lateinit var addPresenterFactory: AddPresenter.AddPresenterFactory
+
+    private val addPresenter: AddPresenter by lazy{
+        addPresenterFactory.create(this)
+    }
 
     private lateinit var binding: ActivityAddBinding
-
-    private val gosdaqRepository: GosdaqRepository by lazy {
-        GosdaqRepository.getInstance(this)
-    }
-    private val addPresenter: AddPresenter by lazy {
-        AddPresenter(this, gosdaqRepository)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,16 +40,16 @@ class AddActivity : AppCompatActivity(), AddContract.AddView {
     }
 
     private fun initListener() {
-        binding.krRadioButton.setOnClickListener {
+        binding.radioKr.setOnClickListener {
             binding.tickerArea.visibility = View.VISIBLE
         }
 
-        binding.usRadioButton.setOnClickListener {
+        binding.radioUs.setOnClickListener {
             binding.tickerArea.visibility = View.VISIBLE
         }
 
         binding.addTickerButton.setOnClickListener {
-            val regionRadioButtonStatus = when (binding.usRadioButton.isChecked) {
+            val regionRadioButtonStatus = when (binding.radioUs.isChecked) {
                 true -> Region.US()
                 else -> Region.KR()
             }
@@ -55,30 +58,30 @@ class AddActivity : AppCompatActivity(), AddContract.AddView {
             val keyboard = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             keyboard.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
 
-            binding.progressArea.visibility = View.VISIBLE
+            binding.layoutTickerProgress.visibility = View.VISIBLE
 
             addPresenter.insertInterestingData(lifecycleScope, inputTicker, regionRadioButtonStatus)
         }
     }
 
     override fun onAddTickerSuccess() {
-        binding.find.visibility = View.GONE
-        binding.allFind.visibility = View.VISIBLE
+        binding.textFindTickerEnd.visibility = View.VISIBLE
+        binding.textFindTickerStart.visibility = View.GONE
         finish()
     }
 
     override fun onAddTickerFailure(isDuplicated: Boolean, ticker: String) {
         when (isDuplicated) {
             true -> {
-                binding.progressArea.visibility = View.GONE
-                binding.find.visibility = View.VISIBLE
-                binding.allFind.visibility = View.GONE
+                binding.layoutTickerProgress.visibility = View.GONE
+                binding.textFindTickerStart.visibility = View.VISIBLE
+                binding.textFindTickerEnd.visibility = View.GONE
                 Toast.makeText(this@AddActivity, "${ticker}는 이미 추가되어 있는 종목이에요.", Toast.LENGTH_SHORT).show()
             }
             false -> {
-                binding.progressArea.visibility = View.GONE
-                binding.find.visibility = View.VISIBLE
-                binding.allFind.visibility = View.GONE
+                binding.layoutTickerProgress.visibility = View.GONE
+                binding.textFindTickerStart.visibility = View.VISIBLE
+                binding.textFindTickerEnd.visibility = View.GONE
                 Toast.makeText(this@AddActivity, "${ticker}는 현재 추가 할 수 없는 종목이에요.", Toast.LENGTH_SHORT).show()
             }
         }
@@ -87,11 +90,11 @@ class AddActivity : AppCompatActivity(), AddContract.AddView {
     override fun showElement() {
         lifecycleScope.launch {
             delay(100)
-            binding.addTitle.visibility = View.VISIBLE
+            binding.textAddTitle.visibility = View.VISIBLE
             delay(200)
-            binding.textView.visibility = View.VISIBLE
+            binding.textAddDescription.visibility = View.VISIBLE
             delay(300)
-            binding.tickerCountryRadioGroup.visibility = View.VISIBLE
+            binding.radioGroupCountry.visibility = View.VISIBLE
         }
     }
 }

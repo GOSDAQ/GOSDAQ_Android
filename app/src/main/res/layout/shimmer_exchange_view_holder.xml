@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        android:id="@+id/rectangle_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:includeFontPadding="false"
+            android:gravity="center_vertical"
+            android:text="GOSDAQ"
+            android:textAppearance="@style/title_style" />
+
+        <TextView
+            android:id="@+id/some_id"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/title"
+            android:includeFontPadding="false"
+            android:background="#777777"
+            android:textAppearance="@style/exchange_style"
+            android:layout_marginBottom="20dp"/>
+    </RelativeLayout>
+</layout>
