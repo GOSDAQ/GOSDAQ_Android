@@ -1,9 +1,6 @@
 package com.project.gosdaq.data.room
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface InterestingDao {
@@ -12,4 +9,7 @@ interface InterestingDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(interestingEntity: InterestingEntity)
+
+    @Query("DELETE FROM interesting_data WHERE ticker = :ticker")
+    fun delete(ticker: String)
 }

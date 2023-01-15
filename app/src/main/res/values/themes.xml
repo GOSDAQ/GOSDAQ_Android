@@ -3,8 +3,8 @@
     <style name="Theme.GOSDAQ" parent="Theme.Material3.Light.NoActionBar">
 
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">#333333</item>
+        <item name="colorPrimaryVariant">#555555</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -14,10 +14,10 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
-    </style>
 
-    <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Large">
-        <item name="android:textStyle">bold</item>
-    </style>
+        <item name="windowSplashScreenAnimatedIcon" tools:targetApi="s">@mipmap/ic_gosdaq</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/white</item>
 
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>

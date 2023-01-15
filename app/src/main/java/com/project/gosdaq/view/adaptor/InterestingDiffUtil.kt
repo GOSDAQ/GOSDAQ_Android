@@ -1,4 +1,4 @@
-package com.project.gosdaq.adaptor
+package com.project.gosdaq.view.adaptor
 
 import androidx.recyclerview.widget.DiffUtil
 import com.project.gosdaq.data.interesting.InterestingResponseDataElement
