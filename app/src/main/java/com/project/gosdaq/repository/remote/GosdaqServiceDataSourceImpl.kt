@@ -6,16 +6,10 @@ import com.project.gosdaq.data.interesting.InterestingResponse
 import com.project.gosdaq.data.available.IsAvailableTickerResponse
 import com.project.gosdaq.data.enum.Region
 import com.project.gosdaq.data.exchange.ExchangeResponse
-import com.project.gosdaq.data.interesting.InterestingResponseData
-import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.sql.Time
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -37,37 +31,55 @@ class GosdaqServiceDataSourceImpl @Inject constructor() : GosdaqServiceDataSourc
         gosdaqBuilder.create(GosdaqServiceApi::class.java)
     }
 
-    override suspend fun getStockInformation(stockNameList: List<InterestingEntity>): InterestingResponse {
+    override suspend fun getStockInformation(stockNameList: List<InterestingEntity>): InterestingResponse? {
         val payload = hashMapOf("tickers" to stockNameList.map { it.ticker })
-        val requestResponse = gosdaqService.getInterestingData(payload)
-
-        when (requestResponse.isSuccessful) {
-            true -> return requestResponse.body()!!
-            false -> throw Exception("")
+        val requestResponse = try{
+            gosdaqService.getInterestingData(payload)
+        }catch (_: Exception){
+            return null
+        }
+        return when (requestResponse.isSuccessful) {
+            true -> requestResponse.body()!!
+            false -> null
         }
     }
 
-    override suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse {
+    override suspend fun getExchange(): ExchangeResponse? {
+        val requestResponse = try{
+            gosdaqService.getExchange()
+        }catch (_: Exception){
+            return null
+        }
+        return when (requestResponse.isSuccessful) {
+            true -> requestResponse.body()!!
+            false -> null
+        }
+    }
+
+    override suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse? {
         return when (region) {
             is Region.KR -> {
-                val requestResponse = gosdaqService.isAvailableKrTicker(ticker, region.countryName)
+                val requestResponse = try{
+                    gosdaqService.isAvailableKrTicker(ticker, region.countryName)
+                }catch (_: Exception){
+                    return null
+                }
                 when(requestResponse.isSuccessful){
                     true -> requestResponse.body()!!
-                    false -> throw Exception("")
+                    false -> null
                 }
             }
             is Region.US -> {
-                val requestResponse = gosdaqService.isAvailableUsTicker(ticker)
+                val requestResponse = try{
+                    gosdaqService.isAvailableUsTicker(ticker)
+                }catch (_: Exception){
+                    return null
+                }
                 when(requestResponse.isSuccessful){
                     true -> requestResponse.body()!!
-                    false -> throw Exception("")
+                    false -> null
                 }
             }
         }
-    }
-
-    override suspend fun getExchange(): ExchangeResponse {
-        val requestResponse = gosdaqService.getExchange()
-        return requestResponse.body()!!
     }
 }

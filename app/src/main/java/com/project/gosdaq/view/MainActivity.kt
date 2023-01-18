@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.view.animation.LinearInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -165,6 +166,10 @@ class MainActivity: AppCompatActivity(), InterestingContract.InterestingView {
 
     override fun initExchange(exchange: String) {
         binding.exchange.text = "${exchange}원"
+    }
+
+    override fun showToast(message: String){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun createDeleteDialog(pos: Int): AlertDialog {
