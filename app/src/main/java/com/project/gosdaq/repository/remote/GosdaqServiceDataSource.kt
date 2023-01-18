@@ -9,7 +9,7 @@ import com.project.gosdaq.data.interesting.InterestingResponseData
 import kotlinx.coroutines.CoroutineScope
 
 interface GosdaqServiceDataSource {
-    suspend fun getStockInformation(stockNameList: List<InterestingEntity>): InterestingResponse
-    suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse
-    suspend fun getExchange(): ExchangeResponse
+    suspend fun getStockInformation(stockNameList: List<InterestingEntity>): InterestingResponse?
+    suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse?
+    suspend fun getExchange(): ExchangeResponse?
 }

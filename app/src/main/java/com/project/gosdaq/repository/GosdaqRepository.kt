@@ -24,10 +24,6 @@ class GosdaqRepository @Inject constructor(
         return localDataSource.loadInterestingDataList()
     }
 
-    override suspend fun getStockInformation(stockNameList: List<InterestingEntity>): InterestingResponse {
-        return remoteDataSource.getStockInformation(stockNameList)
-    }
-
     override suspend fun insertInterestingData(newInterestingEntity: InterestingEntity) {
         localDataSource.insertInterestingData(newInterestingEntity)
     }
@@ -36,11 +32,15 @@ class GosdaqRepository @Inject constructor(
         localDataSource.deleteInterestingData(ticker)
     }
 
-    override suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse {
+    override suspend fun getStockInformation(stockNameList: List<InterestingEntity>): InterestingResponse? {
+        return remoteDataSource.getStockInformation(stockNameList)
+    }
+
+    override suspend fun isAvailableTicker(ticker: String, region: Region): IsAvailableTickerResponse? {
         return remoteDataSource.isAvailableTicker(ticker, region)
     }
 
-    override suspend fun getExchange(): ExchangeResponse {
+    override suspend fun getExchange(): ExchangeResponse? {
         return remoteDataSource.getExchange()
     }
 }

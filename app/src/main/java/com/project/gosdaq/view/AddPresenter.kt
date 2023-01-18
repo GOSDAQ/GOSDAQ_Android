@@ -41,23 +41,26 @@ class AddPresenter @AssistedInject constructor(
                 }
                 else -> {
                     val newTicker = listOf(InterestingEntity(ticker=isAvailableTicker))
-                    val interestingResponseDataElement = getInterestingDataInformation(newTicker).data.list[0]
 
-                    gosdaqRepository.insertInterestingData(InterestingEntity(ticker=interestingResponseDataElement.ticker))
+                    when(val getStockInformationResult = gosdaqRepository.getStockInformation(newTicker)){
+                        null -> {
+                            Timber.i("Fail to receive (getStockInformation)")
+                        }
+                        else -> {
+                            val interestingResponseDataElement = getStockInformationResult.data.list[0]
+                            gosdaqRepository.insertInterestingData(InterestingEntity(ticker=interestingResponseDataElement.ticker))
 
-                    Timber.i(interestingResponseDataElement.toString())
-                    InterestingData.interestingTickerList.add(1, interestingResponseDataElement)
+                            Timber.i(interestingResponseDataElement.toString())
+                            InterestingData.interestingTickerList.add(1, interestingResponseDataElement)
 
-                    withContext(Dispatchers.Main){
-                        addView.onAddTickerSuccess()
+                            withContext(Dispatchers.Main){
+                                addView.onAddTickerSuccess()
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-
-    private suspend fun getInterestingDataInformation(stockNameList: List<InterestingEntity>): InterestingResponse {
-        return gosdaqRepository.getStockInformation(stockNameList)
     }
 
     private suspend fun isAvailableTicker(ticker: String, region: Region): String? {
@@ -66,6 +69,13 @@ class AddPresenter @AssistedInject constructor(
         }?.let {
             return "IS_DUPLICATED"
         }
-        return gosdaqRepository.isAvailableTicker(ticker, region).data?.ticker
+        return when(val isAvailableTickerResult = gosdaqRepository.isAvailableTicker(ticker, region)){
+            null -> {
+                Timber.i("Fail to receive (isAvailableTicker)")
+                null
+            }else ->{
+                isAvailableTickerResult.data?.ticker
+            }
+        }
     }
 }

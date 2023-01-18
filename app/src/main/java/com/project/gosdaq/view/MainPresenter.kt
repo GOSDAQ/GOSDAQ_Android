@@ -31,24 +31,40 @@ class MainPresenter @AssistedInject constructor(
             val exchangeResponse = async { gosdaqRepository.getExchange() }
 
             withContext(Dispatchers.Main) {
-                Timber.i("InterestingDataInformation ResponseCode: ${stockInformation.await().code} / ${stockInformation.await().msg}")
-
-                when(isRefresh){
-                    true -> {
-                        InterestingData.interestingTickerList = InterestingData.interestingTickerList.subList(0, 1)
-                        InterestingData.interestingTickerList += stockInformation.await().data.list.reversed()
-                        InterestingData.interestingTickerList[0].price = exchangeResponse.await().data.exchange.toFloat()
+                when (val stockInformationResult = stockInformation.await()){
+                    null -> {
+                        Timber.i("Fail to receive (getStockInformation)")
+                        interestingView.showToast("서버와 통신을 실패했어요.\n잠시 후 다시 시도해주세요.")
+                        interestingView.initInterestingRecyclerView()
+                        interestingView.setShimmerVisibility(false)
                     }
-                    false -> {
-                        InterestingData.interestingTickerList += stockInformation.await().data.list.reversed()
-                        InterestingData.interestingTickerList[0].price = exchangeResponse.await().data.exchange.toFloat()
+                    else -> {
+                        Timber.i("InterestingDataInformation ResponseCode: ${stockInformationResult.code} / ${stockInformationResult.msg}")
+                        when(isRefresh){
+                            true -> {
+                                InterestingData.interestingTickerList = InterestingData.interestingTickerList.subList(0, 1)
+                                InterestingData.interestingTickerList += stockInformationResult.data.list.reversed()
+                            }
+                            false -> {
+                                InterestingData.interestingTickerList += stockInformationResult.data.list.reversed()
+                            }
+                        }
+                        interestingView.initInterestingRecyclerView()
+                        interestingView.setShimmerVisibility(false)
                     }
                 }
 
-                interestingView.initInterestingRecyclerView()
-                interestingView.setShimmerVisibility(false)
-
-                interestingView.initExchange(exchangeResponse.await().data.exchange.toString())
+                when (val exchangeResponseResult = exchangeResponse.await()){
+                    null -> {
+                        Timber.i("Fail to receive (getExchange)")
+                        InterestingData.interestingTickerList[0].price = 0.0F
+                    }
+                    else -> {
+                        Timber.i("InterestingDataInformation ResponseCode: ${exchangeResponseResult.code} / ${exchangeResponseResult.msg}")
+                        InterestingData.interestingTickerList[0].price = exchangeResponseResult.data.exchange.toFloat()
+                        interestingView.initExchange(exchangeResponseResult.data.exchange.toString())
+                    }
+                }
             }
         }
     }

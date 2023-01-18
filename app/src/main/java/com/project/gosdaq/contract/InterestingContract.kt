@@ -12,6 +12,8 @@ interface InterestingContract {
         fun initInterestingRecyclerView()
         fun updateInterestingRecyclerView(newData: MutableList<InterestingResponseDataElement>)
         fun initExchange(exchange: String)
+
+        fun showToast(message: String)
     }
 
     interface InterestingPresenter {
