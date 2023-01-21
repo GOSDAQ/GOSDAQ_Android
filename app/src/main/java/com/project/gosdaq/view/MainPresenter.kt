@@ -24,6 +24,8 @@ class MainPresenter @AssistedInject constructor(
         ): MainPresenter
     }
 
+    val interestingData get() = InterestingData.interestingTickerList
+
     override fun setInterestingDataList(scope: CoroutineScope, isRefresh: Boolean) {
         scope.launch(Dispatchers.IO) {
             val localInterestingStockList = gosdaqRepository.loadInterestingDataList()
