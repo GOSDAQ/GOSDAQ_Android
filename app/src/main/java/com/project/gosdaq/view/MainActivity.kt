@@ -104,7 +104,7 @@ class MainActivity: AppCompatActivity(), InterestingContract.InterestingView {
 
     override fun onRestart() {
         super.onRestart()
-        adapter.updateData(InterestingData.interestingTickerList)
+        adapter.updateData(mainPresenter.interestingData)
     }
 
     override fun setShimmerVisibility(visibility: Boolean) {
@@ -134,7 +134,7 @@ class MainActivity: AppCompatActivity(), InterestingContract.InterestingView {
                     deleteDialog.show()
                 }
             })
-            updateData(InterestingData.interestingTickerList)
+            updateData(mainPresenter.interestingData)
         }
 
         binding.recyclerTickerList.adapter = adapter
@@ -173,7 +173,7 @@ class MainActivity: AppCompatActivity(), InterestingContract.InterestingView {
     }
 
     private fun createDeleteDialog(pos: Int): AlertDialog {
-        val interestingResponseDataElement = InterestingData.interestingTickerList[pos]
+        val interestingResponseDataElement = mainPresenter.interestingData[pos]
         val deleteDialog = this.deleteDialog
             .setCancelable(false)
             .setTitle("삭제하기")
