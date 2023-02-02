@@ -1,7 +1,7 @@
 # GOSDAQ_Android
 주식 포트폴리오 관리 서비스, GOSDAQ
 
-# Envrionment
+# Environment
 * macOS 13.1 (Ventura)
 * Kotlin
 * MVP 패턴
